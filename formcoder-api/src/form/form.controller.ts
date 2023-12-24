@@ -14,4 +14,10 @@ export class FormController {
   getHello(): { message: string } {
     return this.formService.getHello();
   }
+
+  @Get('data-push-test')
+  dataPushTest(): { message: string } {
+    const message = this.formService.dataPushTest();
+    return message;
+  }
 }
