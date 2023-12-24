@@ -21,7 +21,6 @@ export class FormController {
       const result = this.formService.dataPushTest();
       return result;
     } catch (error) {
-      console.log('何らかのエラーが発生しました。');
       const errMessage = '何らかのエラーが発生しました。' + error.message;
       return { message: errMessage };
     }

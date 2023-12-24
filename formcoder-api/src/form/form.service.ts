@@ -25,20 +25,16 @@ export class FormService {
       };
       return new Promise<{ message: string }>((resolve, reject) => {
         file.save(JSON.stringify(data), (err) => {
-          console.log('テストデータの保存を実行します');
           if (err) {
-            console.log('テストデータの保存に失敗しました');
             const errMessage =
               'プッシュ時にエラーが発生しました！' + err.message;
             reject(new Error(errMessage));
           } else {
-            console.log('テストデータの保存に成功しました');
             resolve({ message: 'プッシュに成功しました！' });
           }
         });
       });
     } catch (error) {
-      console.log('何らかのエラーが発生しました。');
       const errMessage = '何らかのエラーが発生しました。' + error.message;
       return Promise.reject<{ message: string }>({ message: errMessage });
     }
