@@ -15,14 +15,9 @@ export class FormController {
     return this.formService.getHello();
   }
 
+  //cloud storageにテストデータをpushする
   @Get('data-push-test')
-  dataPushTest() {
-    try {
-      const result = this.formService.dataPushTest();
-      return result;
-    } catch (error) {
-      const errMessage = '何らかのエラーが発生しました。' + error.message;
-      return { message: errMessage };
-    }
+  dataPushTest(): any {
+    return this.formService.dataPushTest();
   }
 }
