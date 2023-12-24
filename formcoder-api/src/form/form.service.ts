@@ -19,7 +19,7 @@ export class FormService {
   dataPushTest(): Promise<{ message: string }> {
     try {
       const bucket = this.storage.bucket(this.bucketName);
-      const file = bucket.file('push-test.json');
+      const file = bucket.file('push-test/push-test.json');
       const data = {
         name: 'test',
       };
