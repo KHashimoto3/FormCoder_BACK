@@ -16,8 +16,14 @@ export class FormController {
   }
 
   @Get('data-push-test')
-  dataPushTest(): { message: string } {
-    const message = this.formService.dataPushTest();
-    return message;
+  dataPushTest() {
+    try {
+      const result = this.formService.dataPushTest();
+      return result;
+    } catch (error) {
+      console.log('何らかのエラーが発生しました。');
+      const errMessage = '何らかのエラーが発生しました。' + error.message;
+      return { message: errMessage };
+    }
   }
 }
