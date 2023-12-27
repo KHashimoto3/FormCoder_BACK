@@ -1,13 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Storage } from '@google-cloud/storage';
 
-type FormData = {
-  id: number;
-  partType: string;
-  explanation: string;
-  childrenPart: string | FormData[];
-  inputIdx: number;
-};
+import { CodingFormData } from '../type/formData';
 
 @Injectable()
 export class FormService {
@@ -28,7 +22,7 @@ export class FormService {
     try {
       const bucket = this.storage.bucket(this.bucketName);
       const file = bucket.file('form/sample-form-data.json');
-      const formData: FormData[] = [
+      const formData: CodingFormData[] = [
         {
           id: 1,
           partType: 'STATIC',
@@ -72,25 +66,27 @@ export class FormService {
     }
   }
 
-  pullFormData(formName: string): Promise<{ formData: FormData[] | string }> {
+  pullFormData(
+    formName: string,
+  ): Promise<{ formData: CodingFormData[] | string }> {
     try {
       const bucket = this.storage.bucket(this.bucketName);
       const file = bucket.file('form/' + formName + '.json');
-      return new Promise<{ formData: FormData[] }>((resolve, reject) => {
+      return new Promise<{ formData: CodingFormData[] }>((resolve, reject) => {
         file.download((err, contents) => {
           if (err) {
             const errMessage = 'プル時にエラーが発生しました！' + err.message;
             reject(new Error(errMessage));
           } else {
             const recievedData = JSON.parse(contents.toString());
-            const formData: FormData[] = recievedData.formData;
+            const formData: CodingFormData[] = recievedData.formData;
             resolve({ formData: formData });
           }
         });
       });
     } catch (error) {
       const errMessage = '何らかのエラーが発生しました。' + error.message;
-      return Promise.reject<{ formData: FormData[] }>({
+      return Promise.reject<{ formData: CodingFormData[] }>({
         formData: null,
       });
     }

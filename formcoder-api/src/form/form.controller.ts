@@ -3,13 +3,7 @@ import { Controller, Put, Query } from '@nestjs/common';
 import { Get } from '@nestjs/common';
 import { FormService } from './form.service';
 
-type FormData = {
-  id: number;
-  partType: string;
-  explanation: string;
-  childrenPart: string | FormData[];
-  inputIdx: number;
-};
+import { CodingFormData } from '../type/formData';
 
 @Controller('form')
 export class FormController {
@@ -28,7 +22,7 @@ export class FormController {
   @Get('/')
   pullFormData(
     @Query('formName') formName: string,
-  ): Promise<{ formData: FormData[] | string }> {
+  ): Promise<{ formData: CodingFormData[] | string }> {
     return this.formService.pullFormData(formName);
   }
 
