@@ -66,6 +66,7 @@ export class FormService {
     }
   }
 
+  //cloud storageから、指定された名前のフォームデータをpullする
   pullFormData(
     formName: string,
   ): Promise<{ formData: CodingFormData[] | string }> {
