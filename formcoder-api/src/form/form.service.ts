@@ -72,22 +72,25 @@ export class FormService {
     try {
       const bucket = this.storage.bucket(this.bucketName);
       const file = bucket.file('form/' + formName + '.json');
-      return new Promise<{ formData: CodingFormData[] }>((resolve, reject) => {
-        file.download((err, contents) => {
-          if (err) {
-            const errMessage = 'プル時にエラーが発生しました！' + err.message;
-            reject(new Error(errMessage));
-          } else {
-            const recievedData = JSON.parse(contents.toString());
-            const formData: CodingFormData[] = recievedData.formData;
-            resolve({ formData: formData });
-          }
-        });
-      });
+      return new Promise<{ formData: CodingFormData[]; error: string }>(
+        (resolve, reject) => {
+          file.download((err, contents) => {
+            if (err) {
+              const errMessage = 'プル時にエラーが発生しました！' + err.message;
+              reject(new Error(errMessage));
+            } else {
+              const recievedData = JSON.parse(contents.toString());
+              const formData: CodingFormData[] = recievedData.formData;
+              resolve({ formData: formData, error: null });
+            }
+          });
+        },
+      );
     } catch (error) {
       const errMessage = '何らかのエラーが発生しました。' + error.message;
       return Promise.reject<{ formData: CodingFormData[] }>({
         formData: null,
+        error: errMessage,
       });
     }
   }
