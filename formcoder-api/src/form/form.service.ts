@@ -39,4 +39,26 @@ export class FormService {
       return Promise.reject<{ message: string }>({ message: errMessage });
     }
   }
+
+  //cloud storageからテストデータをpullする
+  dataPullTest(): Promise<{ message: string }> {
+    try {
+      const bucket = this.storage.bucket(this.bucketName);
+      const file = bucket.file('push-test/push-test.json');
+      return new Promise<{ message: string }>((resolve, reject) => {
+        file.download((err, contents) => {
+          if (err) {
+            const errMessage = 'プル時にエラーが発生しました！' + err.message;
+            reject(new Error(errMessage));
+          } else {
+            console.log('ダウンロードしたコンテンツ：' + contents.toString());
+            resolve({ message: 'プルに成功しました！' });
+          }
+        });
+      });
+    } catch (error) {
+      const errMessage = '何らかのエラーが発生しました。' + error.message;
+      return Promise.reject<{ message: string }>({ message: errMessage });
+    }
+  }
 }

@@ -20,4 +20,10 @@ export class FormController {
   dataPushTest(): any {
     return this.formService.dataPushTest();
   }
+
+  //cloud storageからテストデータをpullする
+  @Get('data-pull-test')
+  dataPullTest(): any {
+    return this.formService.dataPullTest();
+  }
 }
