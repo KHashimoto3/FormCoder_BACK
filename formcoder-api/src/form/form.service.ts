@@ -72,6 +72,30 @@ export class FormService {
     }
   }
 
+  pullFormData(formName: string): Promise<{ formData: FormData[] | string }> {
+    try {
+      const bucket = this.storage.bucket(this.bucketName);
+      const file = bucket.file('form/' + formName + '.json');
+      return new Promise<{ formData: FormData[] }>((resolve, reject) => {
+        file.download((err, contents) => {
+          if (err) {
+            const errMessage = 'プル時にエラーが発生しました！' + err.message;
+            reject(new Error(errMessage));
+          } else {
+            const resultData = JSON.parse(contents.toString());
+            const formData: FormData[] = resultData.formData;
+            resolve({ formData: formData });
+          }
+        });
+      });
+    } catch (error) {
+      const errMessage = '何らかのエラーが発生しました。' + error.message;
+      return Promise.reject<{ formData: FormData[] }>({
+        formData: null,
+      });
+    }
+  }
+
   //cloud storageにテストデータをpushする
   dataPushTest(): Promise<{ message: string }> {
     try {
