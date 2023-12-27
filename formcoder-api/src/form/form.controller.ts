@@ -1,5 +1,5 @@
 import { HttpService } from '@nestjs/axios';
-import { Controller, Query } from '@nestjs/common';
+import { Controller, Put, Query } from '@nestjs/common';
 import { Get } from '@nestjs/common';
 import { FormService } from './form.service';
 
@@ -18,23 +18,23 @@ export class FormController {
     private readonly formService: FormService,
   ) {}
 
-  @Get('hello')
-  getHello(): { message: string } {
-    return this.formService.getHello();
-  }
-
   //cloud storageにフォームデータをpushする
-  @Get('push-form-data')
+  @Put('/')
   pushFormData(): Promise<{ message: string }> {
     return this.formService.pushFormData();
   }
 
   //cloud storageからフォームデータをpullする
-  @Get('pull-form-data')
+  @Get('/')
   pullFormData(
     @Query('formName') formName: string,
   ): Promise<{ formData: FormData[] | string }> {
     return this.formService.pullFormData(formName);
+  }
+
+  @Get('hello')
+  getHello(): { message: string } {
+    return this.formService.getHello();
   }
 
   //cloud storageにテストデータをpushする
