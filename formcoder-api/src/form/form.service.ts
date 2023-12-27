@@ -82,8 +82,8 @@ export class FormService {
             const errMessage = 'プル時にエラーが発生しました！' + err.message;
             reject(new Error(errMessage));
           } else {
-            const resultData = JSON.parse(contents.toString());
-            const formData: FormData[] = resultData.formData;
+            const recievedData = JSON.parse(contents.toString());
+            const formData: FormData[] = recievedData.formData;
             resolve({ formData: formData });
           }
         });
