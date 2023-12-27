@@ -1,6 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { Storage } from '@google-cloud/storage';
 
+type FormData = {
+  id: number;
+  partType: string;
+  explanation: string;
+  childrenPart: string | FormData[];
+  inputIdx: number;
+};
+
 @Injectable()
 export class FormService {
   private storage: Storage;
@@ -13,6 +21,55 @@ export class FormService {
   private bucketName = 'formcoder-77286.appspot.com';
   getHello(): { message: string } {
     return { message: 'Hello World!' };
+  }
+
+  //フォームデータをcloud storageにpushする
+  pushFormData(): Promise<{ message: string }> {
+    try {
+      const bucket = this.storage.bucket(this.bucketName);
+      const file = bucket.file('form/sample-form-data.json');
+      const formData: FormData[] = [
+        {
+          id: 1,
+          partType: 'STATIC',
+          explanation: '#include <stdio.h>\n#include <string.h>',
+          childrenPart: 'none',
+          inputIdx: 0,
+        },
+        {
+          id: 2,
+          partType: 'MAIN',
+          explanation: 'パートの解説',
+          childrenPart: [
+            {
+              id: 21,
+              partType: 'STATIC',
+              explanation: 'char str1[MAXSIZE], str2[MAXSIZE];',
+              childrenPart: 'none',
+              inputIdx: 2,
+            },
+          ],
+          inputIdx: 0,
+        },
+      ];
+      const data = {
+        formData: formData,
+      };
+      return new Promise<{ message: string }>((resolve, reject) => {
+        file.save(JSON.stringify(data), (err) => {
+          if (err) {
+            const errMessage =
+              'プッシュ時にエラーが発生しました！' + err.message;
+            reject(new Error(errMessage));
+          } else {
+            resolve({ message: 'プッシュに成功しました！' });
+          }
+        });
+      });
+    } catch (error) {
+      const errMessage = '何らかのエラーが発生しました。' + error.message;
+      return Promise.reject<{ message: string }>({ message: errMessage });
+    }
   }
 
   //cloud storageにテストデータをpushする

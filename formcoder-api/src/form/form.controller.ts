@@ -15,6 +15,12 @@ export class FormController {
     return this.formService.getHello();
   }
 
+  //cloud storageにフォームデータをpushする
+  @Get('push-form-data')
+  pushFormData(): Promise<{ message: string }> {
+    return this.formService.pushFormData();
+  }
+
   //cloud storageにテストデータをpushする
   @Get('data-push-test')
   dataPushTest(): any {
