@@ -18,7 +18,7 @@ export class FormService {
       },
     });
   }
-  private bucketName = 'formcoder-77286.appspot.com';
+  private bucketName = process.env.BUCKET_NAME;
   getHello(): { message: string } {
     return { message: 'Hello World!' };
   }
