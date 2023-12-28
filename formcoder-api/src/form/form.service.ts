@@ -1,15 +1,21 @@
+import * as dotenv from 'dotenv';
 import { Injectable } from '@nestjs/common';
 import { Storage } from '@google-cloud/storage';
 
 import { CodingFormData } from '../type/formData';
+
+dotenv.config();
 
 @Injectable()
 export class FormService {
   private storage: Storage;
   constructor() {
     this.storage = new Storage({
-      projectId: 'formcoder-314006',
-      keyFilename: './formcoder-77286-6a6bb007cb25.json',
+      projectId: process.env.PROJECT_ID,
+      credentials: {
+        client_email: process.env.CLIENT_EMAIL,
+        private_key: process.env.PRIVATE_KEY.replace(/\\n/g, '\n'),
+      },
     });
   }
   private bucketName = 'formcoder-77286.appspot.com';
