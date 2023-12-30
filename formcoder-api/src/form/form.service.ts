@@ -1,6 +1,7 @@
 import * as dotenv from 'dotenv';
 import { Injectable } from '@nestjs/common';
 import { Storage } from '@google-cloud/storage';
+import { Firestore } from '@google-cloud/firestore';
 
 import { CodingFormData } from '../type/formData';
 
@@ -9,6 +10,7 @@ dotenv.config();
 @Injectable()
 export class FormService {
   private storage: Storage;
+  private firestore: Firestore;
   constructor() {
     this.storage = new Storage({
       projectId: process.env.PROJECT_ID,
@@ -16,6 +18,14 @@ export class FormService {
         client_email: process.env.CLIENT_EMAIL,
         private_key: process.env.PRIVATE_KEY.replace(/\\n/g, '\n'),
       },
+    });
+    this.firestore = new Firestore({
+      projectId: process.env.PROJECT_ID,
+      credentials: {
+        client_email: process.env.CLIENT_EMAIL,
+        private_key: process.env.PRIVATE_KEY.replace(/\\n/g, '\n'),
+      },
+      databaseId: 'form-hint-db',
     });
   }
   private bucketName = process.env.BUCKET_NAME;
