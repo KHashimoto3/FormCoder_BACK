@@ -4,6 +4,7 @@ import { Get } from '@nestjs/common';
 import { FormService } from './form.service';
 
 import { CodingFormData } from '../type/formData';
+import { FormList } from 'src/type/formList';
 
 @Controller('form')
 export class FormController {
@@ -26,11 +27,18 @@ export class FormController {
     return this.formService.pullFormData(formName);
   }
 
+  //cloud firestoreからフォームリストをpullする
+  @Get('/list')
+  pullFormList(): Promise<{ formList: FormList[] }> {
+    return this.formService.pullFormList();
+  }
+
   @Get('hello')
   getHello(): { message: string } {
     return this.formService.getHello();
   }
 
+  //ここから下はテスト用のAPI--------------------------------------------------------------
   //cloud storageにテストデータをpushする
   @Get('data-push-test')
   dataPushTest(): any {
@@ -41,5 +49,11 @@ export class FormController {
   @Get('data-pull-test')
   dataPullTest(): any {
     return this.formService.dataPullTest();
+  }
+
+  //cloud firestoreにテストデータをpushする
+  @Get('firestore-push-test')
+  firestorePushTest(): any {
+    return this.formService.firestorePushTest();
   }
 }

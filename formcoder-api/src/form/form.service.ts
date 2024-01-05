@@ -1,14 +1,17 @@
 import * as dotenv from 'dotenv';
 import { Injectable } from '@nestjs/common';
 import { Storage } from '@google-cloud/storage';
+import { Firestore } from '@google-cloud/firestore';
 
 import { CodingFormData } from '../type/formData';
+import { FormList } from 'src/type/formList';
 
 dotenv.config();
 
 @Injectable()
 export class FormService {
   private storage: Storage;
+  private firestore: Firestore;
   constructor() {
     this.storage = new Storage({
       projectId: process.env.PROJECT_ID,
@@ -16,6 +19,14 @@ export class FormService {
         client_email: process.env.CLIENT_EMAIL,
         private_key: process.env.PRIVATE_KEY.replace(/\\n/g, '\n'),
       },
+    });
+    this.firestore = new Firestore({
+      projectId: process.env.PROJECT_ID,
+      credentials: {
+        client_email: process.env.CLIENT_EMAIL,
+        private_key: process.env.PRIVATE_KEY.replace(/\\n/g, '\n'),
+      },
+      databaseId: 'form-hint-db',
     });
   }
   private bucketName = process.env.BUCKET_NAME;
@@ -102,6 +113,37 @@ export class FormService {
     }
   }
 
+  //cloud firestoreからフォームリストをpullする
+  pullFormList(): Promise<{ formList: FormList[] | null }> {
+    try {
+      const docRef = this.firestore.collection('form-list').orderBy('id');
+      return new Promise<{ formList: FormList[] }>((resolve, reject) => {
+        docRef
+          .get()
+          .then((snapshot) => {
+            const formList: FormList[] = [];
+            snapshot.forEach((doc) => {
+              formList.push(doc.data() as FormList);
+            });
+            resolve({ formList: formList });
+          })
+          .catch((err) => {
+            console.log('詳細なエラー: ' + err);
+            const errMessage = 'プル時にエラーが発生しました！' + err.message;
+            reject(new Error(errMessage));
+          });
+      });
+    } catch (error) {
+      console.log('詳細なエラー: ' + error);
+      const errMessage = '何らかのエラーが発生しました。' + error.message;
+      return Promise.reject<{ formList: null }>({
+        formList: null,
+        error: errMessage,
+      });
+    }
+  }
+
+  //ここから下はテスト用の関数----------------------------------------------
   //cloud storageにテストデータをpushする
   dataPushTest(): Promise<{ message: string }> {
     try {
@@ -144,6 +186,36 @@ export class FormService {
         });
       });
     } catch (error) {
+      const errMessage = '何らかのエラーが発生しました。' + error.message;
+      return Promise.reject<{ message: string }>({ message: errMessage });
+    }
+  }
+
+  //Firesotreにテストデータをpushする
+  firestorePushTest(): Promise<{ message: string }> {
+    try {
+      const docRef = this.firestore.collection('test').doc('test2');
+
+      const data = {
+        name: 'test',
+        text: 'これはテストです',
+      };
+
+      return new Promise<{ message: string }>((resolve, reject) => {
+        docRef
+          .set(data)
+          .then(() => {
+            resolve({ message: 'プッシュに成功しました！' });
+          })
+          .catch((err) => {
+            console.log('詳細なエラー: ' + err);
+            const errMessage =
+              'プッシュ時にエラーが発生しました！' + err.message;
+            reject(new Error(errMessage));
+          });
+      });
+    } catch (error) {
+      console.log('詳細なエラー: ' + error);
       const errMessage = '何らかのエラーが発生しました。' + error.message;
       return Promise.reject<{ message: string }>({ message: errMessage });
     }
