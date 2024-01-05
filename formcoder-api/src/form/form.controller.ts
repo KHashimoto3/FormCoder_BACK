@@ -42,4 +42,10 @@ export class FormController {
   dataPullTest(): any {
     return this.formService.dataPullTest();
   }
+
+  //cloud firestoreにテストデータをpushする
+  @Get('firestore-push-test')
+  firestorePushTest(): any {
+    return this.formService.firestorePushTest();
+  }
 }

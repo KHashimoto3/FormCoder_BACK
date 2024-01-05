@@ -158,4 +158,34 @@ export class FormService {
       return Promise.reject<{ message: string }>({ message: errMessage });
     }
   }
+
+  //Firesotreにテストデータをpushする
+  firestorePushTest(): Promise<{ message: string }> {
+    try {
+      const docRef = this.firestore.collection('test').doc('test2');
+
+      const data = {
+        name: 'test',
+        text: 'これはテストです',
+      };
+
+      return new Promise<{ message: string }>((resolve, reject) => {
+        docRef
+          .set(data)
+          .then(() => {
+            resolve({ message: 'プッシュに成功しました！' });
+          })
+          .catch((err) => {
+            console.log('詳細なエラー: ' + err);
+            const errMessage =
+              'プッシュ時にエラーが発生しました！' + err.message;
+            reject(new Error(errMessage));
+          });
+      });
+    } catch (error) {
+      console.log('詳細なエラー: ' + error);
+      const errMessage = '何らかのエラーが発生しました。' + error.message;
+      return Promise.reject<{ message: string }>({ message: errMessage });
+    }
+  }
 }
