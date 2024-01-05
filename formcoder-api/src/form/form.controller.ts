@@ -38,6 +38,7 @@ export class FormController {
     return this.formService.getHello();
   }
 
+  //ここから下はテスト用のAPI--------------------------------------------------------------
   //cloud storageにテストデータをpushする
   @Get('data-push-test')
   dataPushTest(): any {
