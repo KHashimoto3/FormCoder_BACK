@@ -114,22 +114,18 @@ export class FormService {
   }
 
   //cloud firestoreからフォームリストをpullする
-  pullFormList(): Promise<{ formList: string }> {
+  pullFormList(): Promise<{ formList: FormList[] | null }> {
     try {
-      const docRef = this.firestore.collection('test').doc('test2');
-      return new Promise<{ formList: string }>((resolve, reject) => {
+      const docRef = this.firestore.collection('form-list').orderBy('id');
+      return new Promise<{ formList: FormList[] }>((resolve, reject) => {
         docRef
           .get()
-          .then((doc) => {
-            if (!doc.exists) {
-              const errMessage = 'ドキュメントが存在しません。';
-              reject(new Error(errMessage));
-            } else {
-              const recievedData = doc.data();
-              const formList: any = JSON.stringify(recievedData);
-              console.log('フォームリスト：' + formList);
-              resolve({ formList: '成功しました' });
-            }
+          .then((snapshot) => {
+            const formList: FormList[] = [];
+            snapshot.forEach((doc) => {
+              formList.push(doc.data() as FormList);
+            });
+            resolve({ formList: formList });
           })
           .catch((err) => {
             console.log('詳細なエラー: ' + err);
@@ -140,7 +136,7 @@ export class FormService {
     } catch (error) {
       console.log('詳細なエラー: ' + error);
       const errMessage = '何らかのエラーが発生しました。' + error.message;
-      return Promise.reject<{ formList: string }>({
+      return Promise.reject<{ formList: null }>({
         formList: null,
         error: errMessage,
       });

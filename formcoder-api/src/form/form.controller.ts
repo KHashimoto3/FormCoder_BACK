@@ -4,6 +4,7 @@ import { Get } from '@nestjs/common';
 import { FormService } from './form.service';
 
 import { CodingFormData } from '../type/formData';
+import { FormList } from 'src/type/formList';
 
 @Controller('form')
 export class FormController {
@@ -28,7 +29,7 @@ export class FormController {
 
   //cloud firestoreからフォームリストをpullする
   @Get('/list')
-  pullFormList(): Promise<{ formList: string }> {
+  pullFormList(): Promise<{ formList: FormList[] }> {
     return this.formService.pullFormList();
   }
 
