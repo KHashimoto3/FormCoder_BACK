@@ -4,6 +4,7 @@ import { Storage } from '@google-cloud/storage';
 import { Firestore } from '@google-cloud/firestore';
 
 import { CodingFormData } from '../type/formData';
+import { FormList } from 'src/type/formList';
 
 dotenv.config();
 
@@ -107,6 +108,40 @@ export class FormService {
       const errMessage = '何らかのエラーが発生しました。' + error.message;
       return Promise.reject<{ formData: CodingFormData[] }>({
         formData: null,
+        error: errMessage,
+      });
+    }
+  }
+
+  //cloud firestoreからフォームリストをpullする
+  pullFormList(): Promise<{ formList: string }> {
+    try {
+      const docRef = this.firestore.collection('test').doc('test2');
+      return new Promise<{ formList: string }>((resolve, reject) => {
+        docRef
+          .get()
+          .then((doc) => {
+            if (!doc.exists) {
+              const errMessage = 'ドキュメントが存在しません。';
+              reject(new Error(errMessage));
+            } else {
+              const recievedData = doc.data();
+              const formList: any = JSON.stringify(recievedData);
+              console.log('フォームリスト：' + formList);
+              resolve({ formList: '成功しました' });
+            }
+          })
+          .catch((err) => {
+            console.log('詳細なエラー: ' + err);
+            const errMessage = 'プル時にエラーが発生しました！' + err.message;
+            reject(new Error(errMessage));
+          });
+      });
+    } catch (error) {
+      console.log('詳細なエラー: ' + error);
+      const errMessage = '何らかのエラーが発生しました。' + error.message;
+      return Promise.reject<{ formList: string }>({
+        formList: null,
         error: errMessage,
       });
     }

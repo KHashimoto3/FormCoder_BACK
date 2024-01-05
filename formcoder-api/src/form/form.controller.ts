@@ -26,6 +26,12 @@ export class FormController {
     return this.formService.pullFormData(formName);
   }
 
+  //cloud firestoreからフォームリストをpullする
+  @Get('/list')
+  pullFormList(): Promise<{ formList: string }> {
+    return this.formService.pullFormList();
+  }
+
   @Get('hello')
   getHello(): { message: string } {
     return this.formService.getHello();
