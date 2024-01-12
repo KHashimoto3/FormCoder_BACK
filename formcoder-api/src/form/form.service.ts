@@ -113,7 +113,7 @@ export class FormService {
   }
 
   //cloud firestoreからフォームリストをpullする
-  pullFormList(): Promise<{ formList: FormList[] | null }> {
+  pullFormList(): Promise<{ formList: FormList[] }> {
     try {
       const docRef = this.firestore.collection('form-list').orderBy('id');
       return new Promise<{ formList: FormList[] }>((resolve, reject) => {
@@ -124,21 +124,22 @@ export class FormService {
             snapshot.forEach((doc) => {
               formList.push(doc.data() as FormList);
             });
+            if (formList.length === 0) {
+              const errMessage = 'フォームリストが空です。';
+              reject(new HttpException(errMessage, 404));
+            }
             resolve({ formList: formList });
           })
           .catch((err) => {
-            console.log('詳細なエラー: ' + err);
-            const errMessage = 'プル時にエラーが発生しました！' + err.message;
-            reject(new Error(errMessage));
+            const errMessage = 'プル時にエラーが発生しました！';
+            console.log(err.message);
+            reject(new HttpException(errMessage, 500));
           });
       });
     } catch (error) {
-      console.log('詳細なエラー: ' + error);
-      const errMessage = '何らかのエラーが発生しました。' + error.message;
-      return Promise.reject<{ formList: null }>({
-        formList: null,
-        error: errMessage,
-      });
+      const errMessage = '何らかのエラーが発生しました。';
+      console.log(error.message);
+      throw new HttpException(errMessage, 500);
     }
   }
 
