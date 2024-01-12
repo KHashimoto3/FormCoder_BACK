@@ -23,7 +23,7 @@ export class FormController {
   @Get('/')
   pullFormData(
     @Query('formName') formName: string,
-  ): Promise<{ formData: CodingFormData[] | string }> {
+  ): Promise<{ formData: CodingFormData[] }> {
     return this.formService.pullFormData(formName);
   }
 
