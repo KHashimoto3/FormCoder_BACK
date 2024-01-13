@@ -18,11 +18,6 @@ export class RecordController {
     return this.recordService.pushAnswerData(recordInputDto);
   }
 
-  @Get('/hello')
-  getHello(): { message: string } {
-    return this.recordService.hello();
-  }
-
   @Get('/tmp')
   pullAnswerTemplate(
     @Query('formName') formName: string,

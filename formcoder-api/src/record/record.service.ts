@@ -21,11 +21,6 @@ export class RecordService {
 
   private backetName = process.env.BUCKET_NAME;
 
-  //テスト用のhello関数
-  hello(): { message: string } {
-    return { message: 'Hello World!' };
-  }
-
   //cloud storageから、解答用のテンプレートをpullする
   pullAnswerTemplate(formName: string): Promise<{ tmpData: TmpData[] }> {
     if (formName === undefined) {
