@@ -1,5 +1,5 @@
 import * as dotenv from 'dotenv';
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { Storage } from '@google-cloud/storage';
 import { HintData } from 'src/type/hintData';
 
@@ -24,27 +24,30 @@ export class HintService {
   pullHintData(): Promise<{ hintData: HintData[] }> {
     try {
       const bucket = this.storage.bucket(this.bucketName);
-      const file = bucket.file('hint/hintData.json');
-      return new Promise<{ hintData: HintData[]; error: null }>(
-        (resolve, reject) => {
-          file.download((err, contents) => {
-            if (err) {
-              const errMessage = 'プル時にエラーが発生しました！' + err.message;
-              reject(new Error(errMessage));
-            } else {
-              const recievedData = JSON.parse(contents.toString());
-              const hintData: HintData[] = recievedData.hintData;
-              resolve({ hintData: hintData, error: null });
+      const file = bucket.file('hint/hintData2.json');
+      return new Promise<{ hintData: HintData[] }>((resolve, reject) => {
+        file.download((err, contents) => {
+          if (err) {
+            //ファイルが見つからなかった場合
+            if (err.message.includes('No such object')) {
+              const errMessage = 'ヒントデータが見つかりません。';
+              console.log(errMessage);
+              reject(new HttpException(errMessage, 404));
             }
-          });
-        },
-      );
-    } catch (error) {
-      const errMessage = '何らかのエラーが発生しました。' + error.message;
-      return Promise.reject<{ hintData: null; error: string }>({
-        hintData: null,
-        error: errMessage,
+            const errMessage = 'プル時にエラーが発生しました！';
+            console.log(err.message);
+            reject(new HttpException(errMessage, 500));
+          } else {
+            const recievedData = JSON.parse(contents.toString());
+            const hintData: HintData[] = recievedData.hintData;
+            resolve({ hintData: hintData });
+          }
+        });
       });
+    } catch (error) {
+      const errMessage = '何らかのエラーが発生しました。';
+      console.log(error.message);
+      throw new HttpException(errMessage, 500);
     }
   }
 }
