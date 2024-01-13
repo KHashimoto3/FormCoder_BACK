@@ -1,5 +1,5 @@
 import * as dotenv from 'dotenv';
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { Storage } from '@google-cloud/storage';
 import { Firestore } from '@google-cloud/firestore';
 
@@ -84,37 +84,42 @@ export class FormService {
   }
 
   //cloud storageから、指定された名前のフォームデータをpullする
-  pullFormData(
-    formName: string,
-  ): Promise<{ formData: CodingFormData[] | string }> {
+  pullFormData(formName: string): Promise<{ formData: CodingFormData[] }> {
+    if (formName === undefined) {
+      const errMessage = 'パラメータformNameは必須です。';
+      throw new HttpException(errMessage, 400);
+    }
     try {
       const bucket = this.storage.bucket(this.bucketName);
       const file = bucket.file('form/' + formName + '.json');
-      return new Promise<{ formData: CodingFormData[]; error: string }>(
-        (resolve, reject) => {
-          file.download((err, contents) => {
-            if (err) {
-              const errMessage = 'プル時にエラーが発生しました！' + err.message;
-              reject(new Error(errMessage));
-            } else {
-              const recievedData = JSON.parse(contents.toString());
-              const formData: CodingFormData[] = recievedData.formData;
-              resolve({ formData: formData, error: null });
+      return new Promise<{ formData: CodingFormData[] }>((resolve, reject) => {
+        file.download((err, contents) => {
+          if (err) {
+            //ファイルが見つからなかった場合
+            if (err.message.includes('No such object')) {
+              const errMessage = 'ヒントデータが見つかりません。';
+              console.log(errMessage);
+              reject(new HttpException(errMessage, 404));
             }
-          });
-        },
-      );
-    } catch (error) {
-      const errMessage = '何らかのエラーが発生しました。' + error.message;
-      return Promise.reject<{ formData: CodingFormData[] }>({
-        formData: null,
-        error: errMessage,
+            const errMessage = 'プル時にエラーが発生しました！';
+            console.log(err.message);
+            reject(new HttpException(errMessage, 500));
+          } else {
+            const recievedData = JSON.parse(contents.toString());
+            const formData: CodingFormData[] = recievedData.formData;
+            resolve({ formData: formData });
+          }
+        });
       });
+    } catch (error) {
+      const errMessage = '何らかのエラーが発生しました。';
+      console.log(error.message);
+      throw new HttpException(errMessage, 500);
     }
   }
 
   //cloud firestoreからフォームリストをpullする
-  pullFormList(): Promise<{ formList: FormList[] | null }> {
+  pullFormList(): Promise<{ formList: FormList[] }> {
     try {
       const docRef = this.firestore.collection('form-list').orderBy('id');
       return new Promise<{ formList: FormList[] }>((resolve, reject) => {
@@ -125,21 +130,22 @@ export class FormService {
             snapshot.forEach((doc) => {
               formList.push(doc.data() as FormList);
             });
+            if (formList.length === 0) {
+              const errMessage = 'フォームリストが空です。';
+              reject(new HttpException(errMessage, 404));
+            }
             resolve({ formList: formList });
           })
           .catch((err) => {
-            console.log('詳細なエラー: ' + err);
-            const errMessage = 'プル時にエラーが発生しました！' + err.message;
-            reject(new Error(errMessage));
+            const errMessage = 'プル時にエラーが発生しました！';
+            console.log(err.message);
+            reject(new HttpException(errMessage, 500));
           });
       });
     } catch (error) {
-      console.log('詳細なエラー: ' + error);
-      const errMessage = '何らかのエラーが発生しました。' + error.message;
-      return Promise.reject<{ formList: null }>({
-        formList: null,
-        error: errMessage,
-      });
+      const errMessage = '何らかのエラーが発生しました。';
+      console.log(error.message);
+      throw new HttpException(errMessage, 500);
     }
   }
 
