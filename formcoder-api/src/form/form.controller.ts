@@ -33,7 +33,7 @@ export class FormController {
     return this.formService.pullFormList();
   }
 
-  @Get('hello')
+  @Get('/hello')
   getHello(): { message: string } {
     return this.formService.getHello();
   }
