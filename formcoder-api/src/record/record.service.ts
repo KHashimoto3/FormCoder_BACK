@@ -33,7 +33,7 @@ export class RecordService {
     }
     try {
       const bucket = this.storage.bucket(this.backetName);
-      const file = bucket.file('form/' + formName + '_tmp.json');
+      const file = bucket.file('record/template/' + formName + '_tmp.json');
       return new Promise<{ tmpData: TmpData[] }>((resolve, reject) => {
         file.download((err, contents) => {
           if (err) {
