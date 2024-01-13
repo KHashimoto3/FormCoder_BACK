@@ -2,6 +2,7 @@ import * as dotenv from 'dotenv';
 import { HttpException, Injectable } from '@nestjs/common';
 import { Storage } from '@google-cloud/storage';
 import { TmpData } from 'src/type/tmpData';
+import { RecordInputDto } from 'src/dto/recordInput.dto';
 
 dotenv.config();
 
@@ -51,6 +52,39 @@ export class RecordService {
             const recievedData = JSON.parse(contents.toString());
             const tmpData: TmpData[] = recievedData.tmpData;
             resolve({ tmpData: tmpData });
+          }
+        });
+      });
+    } catch (error) {
+      const errMessage = '何らかのエラーが発生しました。';
+      console.log(error.message);
+      throw new HttpException(errMessage, 500);
+    }
+  }
+
+  //cloud storageに、解答データをpushする
+  pushAnswerData(recordInputDto: RecordInputDto): Promise<{ message: string }> {
+    if (recordInputDto === undefined) {
+      const errMessage = 'レコードデータは必須です。';
+      throw new HttpException(errMessage, 400);
+    }
+    try {
+      const bucket = this.storage.bucket(this.backetName);
+      const file = bucket.file('record/anyone/test-record.json');
+      const data = {
+        recordData: {
+          fbData: recordInputDto.fbData,
+          inputData: recordInputDto.input,
+        },
+      };
+      return new Promise<{ message: string }>((resolve, reject) => {
+        file.save(JSON.stringify(data), (err) => {
+          if (err) {
+            const errMessage = 'アップロード中にエラーが発生しました！';
+            console.log(err.message);
+            reject(new HttpException(errMessage, 500));
+          } else {
+            resolve({ message: 'アップロードに成功しました。' });
           }
         });
       });
