@@ -65,12 +65,18 @@ export class RecordService {
   //cloud storageに、解答データをpushする
   pushAnswerData(recordInputDto: RecordInputDto): Promise<{ message: string }> {
     if (recordInputDto === undefined) {
-      const errMessage = 'レコードデータは必須です。';
+      const errMessage = '必要なデータが渡されていません。';
       throw new HttpException(errMessage, 400);
     }
     try {
       const bucket = this.storage.bucket(this.backetName);
-      const file = bucket.file('record/anyone/test-record.json');
+      const file = bucket.file(
+        'record/anyone/' +
+          recordInputDto.userId +
+          '_' +
+          recordInputDto.formName +
+          '.json',
+      );
       const data = {
         recordData: {
           fbData: recordInputDto.fbData,

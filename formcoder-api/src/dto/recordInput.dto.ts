@@ -1,4 +1,6 @@
 export class RecordInputDto {
+  readonly userId: string;
+  readonly formName: string;
   readonly fbData: {
     id: number;
     partType: string;
