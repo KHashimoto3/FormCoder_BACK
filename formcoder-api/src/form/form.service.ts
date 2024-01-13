@@ -95,9 +95,15 @@ export class FormService {
       return new Promise<{ formData: CodingFormData[] }>((resolve, reject) => {
         file.download((err, contents) => {
           if (err) {
+            //ファイルが見つからなかった場合
+            if (err.message.includes('No such object')) {
+              const errMessage = 'ヒントデータが見つかりません。';
+              console.log(errMessage);
+              reject(new HttpException(errMessage, 404));
+            }
             const errMessage = 'プル時にエラーが発生しました！';
             console.log(err.message);
-            reject(new HttpException(errMessage, 404));
+            reject(new HttpException(errMessage, 500));
           } else {
             const recievedData = JSON.parse(contents.toString());
             const formData: CodingFormData[] = recievedData.formData;
