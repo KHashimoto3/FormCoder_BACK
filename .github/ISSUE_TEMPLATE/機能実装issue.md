@@ -1,5 +1,5 @@
 ---
-name: 機能開発issue
+name: 機能実装issue
 about: 機能開発用のissueテンプレート
 title: ''
 labels: ''
