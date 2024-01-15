@@ -16,7 +16,7 @@ export class RecordInputDto {
   }[];
 
   @IsNotEmpty()
-  readonly input: {
+  readonly inputData: {
     id: number;
     partType: string;
     inputDataArray: string[];

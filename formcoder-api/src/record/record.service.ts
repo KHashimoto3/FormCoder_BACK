@@ -75,7 +75,7 @@ export class RecordService {
       const data = {
         recordData: {
           fbData: recordInputDto.fbData,
-          inputData: recordInputDto.input,
+          inputData: recordInputDto.inputData,
         },
       };
       return new Promise<{ message: string }>((resolve, reject) => {
