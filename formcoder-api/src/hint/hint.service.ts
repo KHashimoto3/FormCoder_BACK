@@ -24,7 +24,7 @@ export class HintService {
   pullHintData(): Promise<{ hintData: HintData[] }> {
     try {
       const bucket = this.storage.bucket(this.bucketName);
-      const file = bucket.file('hint/hintData2.json');
+      const file = bucket.file('hint/hintData.json');
       return new Promise<{ hintData: HintData[] }>((resolve, reject) => {
         file.download((err, contents) => {
           if (err) {
