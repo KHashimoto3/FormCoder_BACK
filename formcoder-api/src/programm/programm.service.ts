@@ -64,6 +64,7 @@ export class ProgrammService {
       let errors: string[] = [];
       result.compiler_error.split('prog.c:').forEach((value, index) => {
         if (value.match(/\d+:\d+:/)) {
+          errors.push(value);
         }
       });
       const execError: ExecError = {
