@@ -1,11 +1,82 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
+import { HttpService } from '@nestjs/axios';
+import { lastValueFrom, map } from 'rxjs';
 import { ErrorResulveMethod } from 'src/type/errorResulveMethod';
 import { ErrorResulveTable } from 'src/type/errorResulveTable';
+import { WandboxOutput } from 'src/type/wandboxOutput';
+import { ExecResult } from 'src/type/execResult';
+import { ExecError } from 'src/type/execError';
 
 @Injectable()
 export class ProgrammService {
+  constructor(private readonly httpService: HttpService) {}
   hello(): { message: string } {
     return { message: 'hello programm api!' };
+  }
+
+  async execProgramm(
+    code: string,
+    input: string,
+  ): Promise<ExecResult | ExecError> {
+    let bodyData;
+    if (input == 'none') {
+      bodyData = {
+        code: code,
+        options: 'warning,gnu++1y',
+        compiler: 'gcc-13.2.0-c',
+        'compiler-option-raw': '-Dx=hogefuga\n-O3',
+      };
+    } else {
+      bodyData = {
+        code: code,
+        stdin: input,
+        options: 'warning,gnu++1y',
+        compiler: 'gcc-13.2.0-c',
+        'compiler-option-raw': '-Dx=hogefuga\n-O3',
+      };
+    }
+
+    const url = 'https://wandbox.org/api/compile.json';
+    const bodyObj = JSON.stringify(bodyData);
+    let result: WandboxOutput;
+
+    try {
+      result = await lastValueFrom(
+        this.httpService
+          .post(url, bodyObj)
+          .pipe(map((response) => response.data)),
+      );
+    } catch (e) {
+      console.log(e.response);
+      const errMessage = '何らかのエラーが発生しました。';
+      throw new HttpException(errMessage, 500);
+    }
+
+    //結果によって返すものを変える
+    if (result.status == '0') {
+      const execResult: ExecResult = {
+        status: 'success',
+        output: '結果が来ます',
+      };
+      return execResult;
+    } else {
+      //エラーごとに分割して配列に格納
+      let errors: string[] = [];
+      console.log('ローデータ：' + result.compiler_error);
+      result.compiler_error.split('prog.c:').forEach((value, index) => {
+        console.log(index + '番目：' + value);
+        if (value.match(/\d+:\d+:/)) {
+          console.log(index + '番目を処理');
+          console.log(value);
+          errors.push(value);
+        }
+      });
+      const execError: ExecError = {
+        status: 'error',
+        errors: errors,
+      };
+      return execError;
+    }
   }
 
   getErrorResolve(errors: string[]): ErrorResulveMethod[] {

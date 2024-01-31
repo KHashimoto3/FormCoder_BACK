@@ -4,6 +4,9 @@ import { Controller } from '@nestjs/common';
 import { ProgrammService } from './programm.service';
 import { ErrorResulveMethod } from 'src/type/errorResulveMethod';
 import { ErrorResulveInputDto } from 'src/dto/errorResulveInput.dto';
+import { ExecResult } from 'src/type/execResult';
+import { ExecError } from 'src/type/execError';
+import { execInputDto } from 'src/dto/execInput.dto';
 
 @Controller('programm')
 export class ProgrammController {
@@ -15,6 +18,15 @@ export class ProgrammController {
   @Get('hello')
   hello(): { message: string } {
     return this.programmService.hello();
+  }
+
+  @Post('exec-result')
+  async execProgramm(
+    @Body() execInputDto: execInputDto,
+  ): Promise<ExecResult | ExecError> {
+    const code = execInputDto.code;
+    const input = execInputDto.input;
+    return this.programmService.execProgramm(code, input);
   }
 
   @Post('error/resolve')
