@@ -62,13 +62,8 @@ export class ProgrammService {
     } else {
       //エラーごとに分割して配列に格納
       let errors: string[] = [];
-      console.log('ローデータ：' + result.compiler_error);
       result.compiler_error.split('prog.c:').forEach((value, index) => {
-        console.log(index + '番目：' + value);
         if (value.match(/\d+:\d+:/)) {
-          console.log(index + '番目を処理');
-          console.log(value);
-          errors.push(value);
         }
       });
       const execError: ExecError = {
@@ -189,7 +184,6 @@ export class ProgrammService {
         //パターンに一致するかどうか見る
         errorTable.map((checkError) => {
           if (errorStr.match(checkError.pattern)) {
-            console.log('エラーを発見しました');
             //エラー文と説明文、解決方法の文をreplaceNameに渡し、{name}を置き換える
             const [newErrorStr, newDescription, newMethod] = this.replaceName(
               errorStr,
@@ -231,17 +225,11 @@ export class ProgrammService {
       return [error, description, method];
     }
 
-    console.log('nameListは: ' + nameList);
-
     //全てを置き換える。それぞれのnameを、replaceListが持っている場所に置き換える
     nameList.map((name) => {
       const replaceName = '{' + replaceList[nameList.indexOf(name)] + '}';
-      console.log(replaceName + 'を' + name + 'に置き換えます');
       description = description.replace(replaceName, name);
       method = method.replace(replaceName, name);
-      console.log(
-        '置き換え後の説明文と解決方法文: ' + description + ' ' + method,
-      );
     });
     return [error, description, method];
   }
