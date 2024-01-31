@@ -56,7 +56,7 @@ export class ProgrammService {
     if (result.status == '0') {
       const execResult: ExecResult = {
         status: 'success',
-        output: '結果が来ます',
+        output: result.program_output,
       };
       return execResult;
     } else {
