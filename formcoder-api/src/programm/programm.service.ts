@@ -6,6 +6,7 @@ import { ErrorResulveTable } from 'src/type/errorResulveTable';
 import { WandboxOutput } from 'src/type/wandboxOutput';
 import { ExecResult } from 'src/type/execResult';
 import { ExecError } from 'src/type/execError';
+import { CodingFormData } from 'src/type/formData';
 
 @Injectable()
 export class ProgrammService {
@@ -233,5 +234,35 @@ export class ProgrammService {
       method = method.replace(replaceName, name);
     });
     return [error, description, method];
+  }
+
+  pullConnectTmp(): string {
+    const sampleFormData: CodingFormData[] = [
+      {
+        id: 1,
+        partType: 'MAIN',
+        explanation: 'main関数',
+        childrenPart: [
+          {
+            id: 2,
+            partType: 'FOR',
+            explanation: '繰り返し文',
+            childrenPart: [
+              {
+                id: 3,
+                partType: 'OUT',
+                explanation: '出力',
+                childrenPart: 'none',
+                inputIdx: 0,
+              },
+            ],
+            inputIdx: 1,
+          },
+        ],
+        inputIdx: -1,
+      },
+    ];
+
+    return 'connect programm';
   }
 }
