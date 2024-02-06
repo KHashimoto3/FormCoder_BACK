@@ -7,6 +7,7 @@ import { WandboxOutput } from 'src/type/wandboxOutput';
 import { ExecResult } from 'src/type/execResult';
 import { ExecError } from 'src/type/execError';
 import { CodingFormData } from 'src/type/formData';
+import { InputData } from 'src/type/inputData';
 
 @Injectable()
 export class ProgrammService {
@@ -260,6 +261,19 @@ export class ProgrammService {
           },
         ],
         inputIdx: -1,
+      },
+    ];
+
+    const sampleInputData: InputData[] = [
+      {
+        id: 0,
+        partType: 'OUT',
+        inputArray: ['printf("Hello, World!\\n");'],
+      },
+      {
+        id: 1,
+        partType: 'FOR',
+        inputArray: ['int i = 0; i < 10; i++'],
       },
     ];
 
