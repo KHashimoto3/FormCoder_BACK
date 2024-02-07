@@ -8,6 +8,7 @@ import { ExecResult } from 'src/type/execResult';
 import { ExecError } from 'src/type/execError';
 import { CodingFormData } from 'src/type/formData';
 import { InputData } from 'src/type/inputData';
+import { ConnectTemplate } from 'src/type/connectTemplate';
 
 @Injectable()
 export class ProgrammService {
@@ -254,10 +255,10 @@ export class ProgrammService {
                 partType: 'OUT',
                 explanation: '出力',
                 childrenPart: 'none',
-                inputIdx: 0,
+                inputIdx: 1,
               },
             ],
-            inputIdx: 1,
+            inputIdx: 0,
           },
         ],
         inputIdx: -1,
@@ -267,13 +268,34 @@ export class ProgrammService {
     const sampleInputData: InputData[] = [
       {
         id: 0,
-        partType: 'OUT',
-        inputArray: ['printf("Hello, World!\\n");'],
+        partType: 'FOR',
+        inputArray: ['int i = 0; i < 10; i++'],
       },
       {
         id: 1,
+        partType: 'OUT',
+        inputArray: ['printf("Hello, World!\\n");'],
+      },
+    ];
+
+    const sampleConnectTemplate: ConnectTemplate[] = [
+      {
+        partType: 'MAIN',
+        haveChildren: true,
+        beforeElement: 'int main() {\\n',
+        afterElement: 'return 0;\\n}',
+      },
+      {
         partType: 'FOR',
-        inputArray: ['int i = 0; i < 10; i++'],
+        haveChildren: true,
+        beforeElement: 'for ({input}) {\\n',
+        afterElement: '\\n}',
+      },
+      {
+        partType: 'OUT',
+        haveChildren: false,
+        beforeElement: 'printf("',
+        afterElement: '");\\n',
       },
     ];
 
