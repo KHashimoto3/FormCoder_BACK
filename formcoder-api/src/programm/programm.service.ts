@@ -294,7 +294,7 @@ export class ProgrammService {
       {
         partType: 'OUT',
         haveChildren: false,
-        beforeElement: ['printf("', '{input}', '");\\n'],
+        beforeElement: ['{input}', '\\n'],
         afterElement: [''],
       },
     ];
@@ -336,11 +336,12 @@ export class ProgrammService {
       throw new HttpException('何らかのエラーが発生しました。', 500);
     }
     connectTmp.beforeElement.map((element) => {
-      if (element == '{input}') {
+      if (element === '{input}') {
         result += inputDataList[form.inputIdx].inputArray[inputIdx];
         inputIdx++;
+      } else {
+        result += element;
       }
-      result += element;
     });
     if (connectTmp.haveChildren && typeof form.childrenPart != 'string') {
       result += this.callConnectCode(
