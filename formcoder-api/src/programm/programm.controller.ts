@@ -35,4 +35,9 @@ export class ProgrammController {
   ): ErrorResulveMethod[] {
     return this.programmService.getErrorResolve(errorResulveInputDto.errors);
   }
+
+  @Get('connected-code')
+  getConnectedCode(): string {
+    return this.programmService.getConnectedCode();
+  }
 }

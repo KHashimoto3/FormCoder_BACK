@@ -333,7 +333,7 @@ export class ProgrammService {
       (tmp) => tmp.partType == form.partType,
     );
     if (connectTmp == undefined) {
-      return;
+      throw new HttpException('何らかのエラーが発生しました。', 500);
     }
     connectTmp.beforeElement.map((element) => {
       if (element == '{input}') {
@@ -348,6 +348,7 @@ export class ProgrammService {
         inputDataList,
         connectTemplateList,
       );
+      result += '\n' + connectTmp.afterElement[0];
     }
     return result;
   }
