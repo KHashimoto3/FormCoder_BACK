@@ -294,8 +294,8 @@ export class ProgrammService {
       {
         partType: 'OUT',
         haveChildren: false,
-        beforeElement: ['printf("'],
-        afterElement: ['");\\n'],
+        beforeElement: ['printf("', '{input}', '");\\n'],
+        afterElement: [''],
       },
     ];
 
