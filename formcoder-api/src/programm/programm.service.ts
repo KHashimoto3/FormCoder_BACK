@@ -238,7 +238,7 @@ export class ProgrammService {
     return [error, description, method];
   }
 
-  pullConnectTmp(): string {
+  getConnectedCode(): string {
     const sampleFormData: CodingFormData[] = [
       {
         id: 1,
@@ -282,23 +282,73 @@ export class ProgrammService {
       {
         partType: 'MAIN',
         haveChildren: true,
-        beforeElement: 'int main() {\\n',
-        afterElement: 'return 0;\\n}',
+        beforeElement: ['int main() {\\n'],
+        afterElement: ['return 0;\\n}'],
       },
       {
         partType: 'FOR',
         haveChildren: true,
-        beforeElement: 'for ({input}) {\\n',
-        afterElement: '\\n}',
+        beforeElement: ['for(', '{input}', ') {\\n'],
+        afterElement: ['\\n}'],
       },
       {
         partType: 'OUT',
         haveChildren: false,
-        beforeElement: 'printf("',
-        afterElement: '");\\n',
+        beforeElement: ['printf("'],
+        afterElement: ['");\\n'],
       },
     ];
 
-    return 'connect programm';
+    const result = this.callConnectCode(
+      sampleFormData,
+      sampleInputData,
+      sampleConnectTemplate,
+    );
+
+    return '接続されたコードは以下の通りです。' + result;
+  }
+
+  callConnectCode(
+    formData: CodingFormData[],
+    inputData: InputData[],
+    connectTemplate: ConnectTemplate[],
+  ): string {
+    let result: string = '';
+    formData.map((form) => {
+      result += this.connectCode(form, inputData, connectTemplate);
+    });
+    return result;
+  }
+
+  connectCode(
+    form: CodingFormData,
+    inputDataList: InputData[],
+    connectTemplateList: ConnectTemplate[],
+  ): string {
+    let result: string = '';
+    //inputのidxを0にする
+    let inputIdx = 0;
+    //formのpartTypeに対応するconnectTemplateを取り出す
+    const connectTmp = connectTemplateList.find(
+      (tmp) => tmp.partType == form.partType,
+    );
+    if (connectTmp == undefined) {
+      return;
+    }
+    connectTmp.beforeElement.map((element) => {
+      if (element == '{input}') {
+        result += inputDataList[form.inputIdx].inputArray[inputIdx];
+        inputIdx++;
+      }
+      result += element;
+    });
+    if (connectTmp.haveChildren && typeof form.childrenPart != 'string') {
+      result += this.callConnectCode(
+        form.childrenPart,
+        inputDataList,
+        connectTemplateList,
+      );
+    }
+    return result;
   }
 }
