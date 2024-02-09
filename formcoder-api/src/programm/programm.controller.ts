@@ -36,7 +36,7 @@ export class ProgrammController {
   ): ErrorResulveMethod[] {
     return this.programmService.getErrorResolve(errorResulveInputDto.errors);
   }
-  @Post('connect-code')
+  @Post('connected-code')
   getConnectedCode(@Body() connectCodeInputDto: ConnectCodeInputDto): string {
     return this.programmService.getConnectedCode(
       connectCodeInputDto.formData,
