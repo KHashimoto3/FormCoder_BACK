@@ -238,46 +238,7 @@ export class ProgrammService {
     return [error, description, method];
   }
 
-  getConnectedCode(): string {
-    const sampleFormData: CodingFormData[] = [
-      {
-        id: 1,
-        partType: 'MAIN',
-        explanation: 'main関数',
-        childrenPart: [
-          {
-            id: 2,
-            partType: 'FOR',
-            explanation: '繰り返し文',
-            childrenPart: [
-              {
-                id: 3,
-                partType: 'OUT',
-                explanation: '出力',
-                childrenPart: 'none',
-                inputIdx: 1,
-              },
-            ],
-            inputIdx: 0,
-          },
-        ],
-        inputIdx: -1,
-      },
-    ];
-
-    const sampleInputData: InputData[] = [
-      {
-        id: 0,
-        partType: 'FOR',
-        inputArray: ['int i = 0; i < 10; i++'],
-      },
-      {
-        id: 1,
-        partType: 'OUT',
-        inputArray: ['printf("Hello, World!\\n");'],
-      },
-    ];
-
+  getConnectedCode(formData: CodingFormData[], inputData: InputData[]): string {
     const sampleConnectTemplate: ConnectTemplate[] = [
       {
         partType: 'MAIN',
@@ -300,8 +261,8 @@ export class ProgrammService {
     ];
 
     const result = this.callConnectCode(
-      sampleFormData,
-      sampleInputData,
+      formData,
+      inputData,
       sampleConnectTemplate,
     );
 
