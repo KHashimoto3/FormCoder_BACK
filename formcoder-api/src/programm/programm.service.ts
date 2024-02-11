@@ -241,10 +241,34 @@ export class ProgrammService {
   getConnectedCode(formData: CodingFormData[], inputData: InputData[]): string {
     const sampleConnectTemplate: ConnectTemplate[] = [
       {
+        partType: 'INC',
+        haveChildren: false,
+        beforeElement: ['{input}', '\\n'],
+        afterElement: [''],
+      },
+      {
         partType: 'MAIN',
         haveChildren: true,
         beforeElement: ['int main() {\\n'],
         afterElement: ['return 0;\\n}'],
+      },
+      {
+        partType: 'DAT',
+        haveChildren: false,
+        beforeElement: ['{input}', '\\n'],
+        afterElement: [''],
+      },
+      {
+        partType: 'PROC',
+        haveChildren: false,
+        beforeElement: ['{input}', '\\n'],
+        afterElement: [''],
+      },
+      {
+        partType: 'WHL',
+        haveChildren: true,
+        beforeElement: ['while(', '{input}', ') {\\n'],
+        afterElement: ['\\n}'],
       },
       {
         partType: 'FOR',
@@ -253,9 +277,39 @@ export class ProgrammService {
         afterElement: ['\\n}'],
       },
       {
+        partType: 'INP',
+        haveChildren: false,
+        beforeElement: ['{input}', '\\n'],
+        afterElement: [''],
+      },
+      {
         partType: 'OUT',
         haveChildren: false,
         beforeElement: ['{input}', '\\n'],
+        afterElement: [''],
+      },
+      {
+        partType: 'IF',
+        haveChildren: true,
+        beforeElement: ['if(', '{input}', ') {\\n'],
+        afterElement: ['\\n}'],
+      },
+      {
+        partType: 'ELIF',
+        haveChildren: true,
+        beforeElement: ['else if(', '{input}', ') {\\n'],
+        afterElement: ['\\n}'],
+      },
+      {
+        partType: 'ELS',
+        haveChildren: true,
+        beforeElement: ['else {\\n'],
+        afterElement: ['\\n}'],
+      },
+      {
+        partType: 'IFE',
+        haveChildren: false,
+        beforeElement: ['\\n}'],
         afterElement: [''],
       },
     ];
