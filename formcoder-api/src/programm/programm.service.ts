@@ -9,6 +9,7 @@ import { ExecError } from 'src/type/execError';
 import { CodingFormData } from 'src/type/formData';
 import { InputData } from 'src/type/inputData';
 import { ConnectTemplate } from 'src/type/connectTemplate';
+import { ConnectedCode } from 'src/type/connectedCode';
 
 @Injectable()
 export class ProgrammService {
@@ -238,7 +239,10 @@ export class ProgrammService {
     return [error, description, method];
   }
 
-  getConnectedCode(formData: CodingFormData[], inputData: InputData[]): string {
+  getConnectedCode(
+    formData: CodingFormData[],
+    inputData: InputData[],
+  ): ConnectedCode {
     const sampleConnectTemplate: ConnectTemplate[] = [
       {
         partType: 'INC',
@@ -314,13 +318,16 @@ export class ProgrammService {
       },
     ];
 
+    console.log('formDataは、' + formData);
+    console.log('inputDataは、' + inputData);
+
     const result = this.callConnectCode(
       formData,
       inputData,
       sampleConnectTemplate,
     );
 
-    return '接続されたコードは以下の通りです。' + result;
+    return { connectedCode: result };
   }
 
   callConnectCode(
@@ -352,7 +359,7 @@ export class ProgrammService {
     }
     connectTmp.beforeElement.map((element) => {
       if (element === '{input}') {
-        result += inputDataList[form.inputIdx].inputArray[inputIdx];
+        result += inputDataList[form.inputIdx].inputDataArray[inputIdx];
         inputIdx++;
       } else {
         result += element;
