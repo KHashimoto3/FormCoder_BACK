@@ -7,6 +7,8 @@ import { ErrorResulveInputDto } from 'src/dto/errorResulveInput.dto';
 import { ExecResult } from 'src/type/execResult';
 import { ExecError } from 'src/type/execError';
 import { execInputDto } from 'src/dto/execInput.dto';
+import { ConnectCodeInputDto } from 'src/dto/connectCodeInput.dto';
+import { ConnectedCode } from 'src/type/connectedCode';
 
 @Controller('programm')
 export class ProgrammController {
@@ -34,5 +36,14 @@ export class ProgrammController {
     @Body() errorResulveInputDto: ErrorResulveInputDto,
   ): ErrorResulveMethod[] {
     return this.programmService.getErrorResolve(errorResulveInputDto.errors);
+  }
+  @Post('connected-code')
+  getConnectedCode(
+    @Body() connectCodeInputDto: ConnectCodeInputDto,
+  ): ConnectedCode {
+    return this.programmService.getConnectedCode(
+      connectCodeInputDto.formData,
+      connectCodeInputDto.inputData,
+    );
   }
 }

@@ -6,6 +6,10 @@ import { ErrorResulveTable } from 'src/type/errorResulveTable';
 import { WandboxOutput } from 'src/type/wandboxOutput';
 import { ExecResult } from 'src/type/execResult';
 import { ExecError } from 'src/type/execError';
+import { CodingFormData } from 'src/type/formData';
+import { InputData } from 'src/type/inputData';
+import { ConnectTemplate } from 'src/type/connectTemplate';
+import { ConnectedCode } from 'src/type/connectedCode';
 
 @Injectable()
 export class ProgrammService {
@@ -233,5 +237,142 @@ export class ProgrammService {
       method = method.replace(replaceName, name);
     });
     return [error, description, method];
+  }
+
+  getConnectedCode(
+    formData: CodingFormData[],
+    inputData: InputData[],
+  ): ConnectedCode {
+    const sampleConnectTemplate: ConnectTemplate[] = [
+      {
+        partType: 'INC',
+        haveChildren: false,
+        beforeElement: ['{input}', '\\n'],
+        afterElement: [''],
+      },
+      {
+        partType: 'MAIN',
+        haveChildren: true,
+        beforeElement: ['int main() {\\n'],
+        afterElement: ['return 0;\\n}'],
+      },
+      {
+        partType: 'DAT',
+        haveChildren: false,
+        beforeElement: ['{input}', '\\n'],
+        afterElement: [''],
+      },
+      {
+        partType: 'PROC',
+        haveChildren: false,
+        beforeElement: ['{input}', '\\n'],
+        afterElement: [''],
+      },
+      {
+        partType: 'WHL',
+        haveChildren: true,
+        beforeElement: ['while(', '{input}', ') {\\n'],
+        afterElement: ['\\n}'],
+      },
+      {
+        partType: 'FOR',
+        haveChildren: true,
+        beforeElement: ['for(', '{input}', ') {\\n'],
+        afterElement: ['\\n}'],
+      },
+      {
+        partType: 'INP',
+        haveChildren: false,
+        beforeElement: ['{input}', '\\n'],
+        afterElement: [''],
+      },
+      {
+        partType: 'OUT',
+        haveChildren: false,
+        beforeElement: ['{input}', '\\n'],
+        afterElement: [''],
+      },
+      {
+        partType: 'IF',
+        haveChildren: true,
+        beforeElement: ['if(', '{input}', ') {\\n'],
+        afterElement: ['}'],
+      },
+      {
+        partType: 'ELIF',
+        haveChildren: true,
+        beforeElement: ['else if(', '{input}', ') {\\n'],
+        afterElement: ['}'],
+      },
+      {
+        partType: 'ELS',
+        haveChildren: true,
+        beforeElement: ['else {\\n'],
+        afterElement: ['}'],
+      },
+      {
+        partType: 'IFE',
+        haveChildren: false,
+        beforeElement: ['n}'],
+        afterElement: [''],
+      },
+    ];
+
+    console.log('formDataは、' + formData);
+    console.log('inputDataは、' + inputData);
+
+    const result = this.callConnectCode(
+      formData,
+      inputData,
+      sampleConnectTemplate,
+    );
+
+    return { connectedCode: result };
+  }
+
+  callConnectCode(
+    formData: CodingFormData[],
+    inputData: InputData[],
+    connectTemplate: ConnectTemplate[],
+  ): string {
+    let result: string = '';
+    formData.map((form) => {
+      result += this.connectCode(form, inputData, connectTemplate);
+    });
+    return result;
+  }
+
+  connectCode(
+    form: CodingFormData,
+    inputDataList: InputData[],
+    connectTemplateList: ConnectTemplate[],
+  ): string {
+    let result: string = '';
+    //inputのidxを0にする
+    let inputIdx = 0;
+    //formのpartTypeに対応するconnectTemplateを取り出す
+    const connectTmp = connectTemplateList.find(
+      (tmp) => tmp.partType == form.partType,
+    );
+    if (connectTmp == undefined) {
+      throw new HttpException('何らかのエラーが発生しました。', 500);
+    }
+    connectTmp.beforeElement.map((element) => {
+      if (element === '{input}') {
+        result += inputDataList[form.inputIdx].inputDataArray[inputIdx];
+        inputIdx++;
+      } else {
+        result += element;
+      }
+    });
+    if (connectTmp.haveChildren && typeof form.childrenPart != 'string') {
+      result += this.callConnectCode(
+        form.childrenPart,
+        inputDataList,
+        connectTemplateList,
+      );
+      result += '\n' + connectTmp.afterElement[0];
+    }
+    return result;
   }
 }
