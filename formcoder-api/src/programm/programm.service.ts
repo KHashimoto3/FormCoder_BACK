@@ -296,24 +296,24 @@ export class ProgrammService {
         partType: 'IF',
         haveChildren: true,
         beforeElement: ['if(', '{input}', ') {\\n'],
-        afterElement: ['\\n}'],
+        afterElement: ['}'],
       },
       {
         partType: 'ELIF',
         haveChildren: true,
         beforeElement: ['else if(', '{input}', ') {\\n'],
-        afterElement: ['\\n}'],
+        afterElement: ['}'],
       },
       {
         partType: 'ELS',
         haveChildren: true,
         beforeElement: ['else {\\n'],
-        afterElement: ['\\n}'],
+        afterElement: ['}'],
       },
       {
         partType: 'IFE',
         haveChildren: false,
-        beforeElement: ['\\n}'],
+        beforeElement: ['n}'],
         afterElement: [''],
       },
     ];
