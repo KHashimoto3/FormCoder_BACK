@@ -5,6 +5,7 @@ import { Firestore } from '@google-cloud/firestore';
 
 import { CodingFormData } from '../type/formData';
 import { FormList } from 'src/type/formList';
+import { Question } from 'src/type/question';
 
 dotenv.config();
 
@@ -128,13 +129,61 @@ export class FormService {
           .then((snapshot) => {
             const formList: FormList[] = [];
             snapshot.forEach((doc) => {
-              formList.push(doc.data() as FormList);
+              const form = {
+                id: doc.id,
+                title: doc.data().title,
+                description: doc.data().description,
+                url: doc.data().url,
+                explanation: doc.data().explanation,
+                inputExample: doc.data().inputExample,
+                outputExample: doc.data().outputExample,
+              };
+              formList.push(form);
             });
             if (formList.length === 0) {
               const errMessage = 'フォームリストが空です。';
               reject(new HttpException(errMessage, 404));
             }
             resolve({ formList: formList });
+          })
+          .catch((err) => {
+            const errMessage = 'プル時にエラーが発生しました！';
+            console.log(err.message);
+            reject(new HttpException(errMessage, 500));
+          });
+      });
+    } catch (error) {
+      const errMessage = '何らかのエラーが発生しました。';
+      console.log(error.message);
+      throw new HttpException(errMessage, 500);
+    }
+  }
+
+  //cloud firestoreから指定されたフォームIDの問題データをpullする
+  pullQuestionData(formId: string): Promise<{ questionData: Question }> {
+    if (formId === undefined) {
+      const errMessage = 'パラメータformIdは必須です。';
+      throw new HttpException(errMessage, 400);
+    }
+    try {
+      const docRef = this.firestore.collection('form-list').doc(formId);
+      return new Promise<{ questionData: Question }>((resolve, reject) => {
+        docRef
+          .get()
+          .then((doc) => {
+            if (!doc.exists) {
+              const errMessage =
+                '指定されたフォームIDのデータが見つかりません。';
+              reject(new HttpException(errMessage, 404));
+            }
+            const questionData: Question = {
+              id: doc.id,
+              title: doc.data().title,
+              explanation: doc.data().explanation,
+              inputExample: doc.data().inputExample,
+              outputExample: doc.data().outputExample,
+            };
+            resolve({ questionData: questionData });
           })
           .catch((err) => {
             const errMessage = 'プル時にエラーが発生しました！';

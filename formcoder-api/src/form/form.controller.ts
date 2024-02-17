@@ -5,6 +5,7 @@ import { FormService } from './form.service';
 
 import { CodingFormData } from '../type/formData';
 import { FormList } from 'src/type/formList';
+import { Question } from 'src/type/question';
 
 @Controller('form')
 export class FormController {
@@ -31,6 +32,14 @@ export class FormController {
   @Get('/list')
   pullFormList(): Promise<{ formList: FormList[] }> {
     return this.formService.pullFormList();
+  }
+
+  //cloud firestoreからフォームの問題データをpullする
+  @Get('/question')
+  pullQuestionData(
+    @Query('formId') formId: string,
+  ): Promise<{ questionData: Question }> {
+    return this.formService.pullQuestionData(formId);
   }
 
   @Get('/hello')
