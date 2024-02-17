@@ -1,8 +1,6 @@
-export type FormList = {
+export type Question = {
   id: string;
   title: string;
-  description: string;
-  url: string;
   explanation: string;
   inputExample: string[];
   outputExample: string[];
