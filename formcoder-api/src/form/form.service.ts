@@ -161,6 +161,10 @@ export class FormService {
 
   //cloud firestoreから指定されたフォームIDの問題データをpullする
   pullQuestionData(formId: string): Promise<{ questionData: Question }> {
+    if (formId === undefined) {
+      const errMessage = 'パラメータformIdは必須です。';
+      throw new HttpException(errMessage, 400);
+    }
     try {
       const docRef = this.firestore.collection('form-list').doc(formId);
       return new Promise<{ questionData: Question }>((resolve, reject) => {
