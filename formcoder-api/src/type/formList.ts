@@ -3,4 +3,7 @@ export type FormList = {
   title: string;
   description: string;
   url: string;
+  explanation: string;
+  inputExample: string[];
+  outputExample: string[];
 };
