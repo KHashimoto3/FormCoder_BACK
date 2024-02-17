@@ -128,7 +128,16 @@ export class FormService {
           .then((snapshot) => {
             const formList: FormList[] = [];
             snapshot.forEach((doc) => {
-              formList.push(doc.data() as FormList);
+              const form = {
+                id: doc.id,
+                title: doc.data().title,
+                description: doc.data().description,
+                url: doc.data().url,
+                explanation: doc.data().explanation,
+                inputExample: doc.data().inputExample,
+                outputExample: doc.data().outputExample,
+              };
+              formList.push(form);
             });
             if (formList.length === 0) {
               const errMessage = 'フォームリストが空です。';
