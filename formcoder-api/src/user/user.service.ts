@@ -3,6 +3,7 @@ import { HttpException, Injectable } from '@nestjs/common';
 import { User } from 'src/type/user';
 import { createHash } from 'crypto';
 import { UserRegisterInputDto } from 'src/dto/userRegisterInput.dto';
+import { LoginOutput } from 'src/type/loginOutput';
 
 @Injectable()
 export class UserService {
@@ -51,6 +52,66 @@ export class UserService {
           .catch((error) => {
             console.log(error.message);
             reject(new HttpException('登録時にエラーが発生しました。', 500));
+          });
+      });
+    } catch (error) {
+      console.log(error.message);
+      throw new HttpException('何らかのエラーが発生しました。', 500);
+    }
+  }
+
+  //ユーザでログインする
+  login(userId: string, password: string): Promise<{ userData: LoginOutput }> {
+    const hash = createHash('sha256');
+    hash.update(password);
+
+    try {
+      const userRef = this.firestore.collection('user').doc(userId);
+      return new Promise<{ userData: LoginOutput }>((resolve, reject) => {
+        userRef
+          .get()
+          .then((doc) => {
+            if (doc.exists) {
+              const data = doc.data();
+              if (data.password === hash.digest('hex')) {
+                const finalLoginAt = new Date().toISOString();
+                userRef
+                  .update({
+                    finalLoginAt: finalLoginAt,
+                  })
+                  .then(() => {
+                    const userData = {
+                      userId: data.userId,
+                      name: data.name,
+                      icon: data.icon,
+                      email: data.email,
+                      finalLoginAt: finalLoginAt,
+                    };
+                    resolve({ userData: userData });
+                  })
+                  .catch((error) => {
+                    console.log(error.message);
+                    reject(
+                      new HttpException(
+                        'ログイン時にエラーが発生しました。',
+                        500,
+                      ),
+                    );
+                  });
+              } else {
+                reject(new HttpException('パスワードが違います。', 401));
+              }
+            } else {
+              reject(
+                new HttpException('指定されたユーザーが存在しません。', 404),
+              );
+            }
+          })
+          .catch((error) => {
+            console.log(error.message);
+            reject(
+              new HttpException('ログイン時にエラーが発生しました。', 500),
+            );
           });
       });
     } catch (error) {
