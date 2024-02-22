@@ -1,6 +1,7 @@
-import { Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { UserService } from './user.service';
 import { HttpService } from '@nestjs/axios';
+import { UserRegisterInputDto } from 'src/dto/userRegisterInput.dto';
 
 @Controller('user')
 export class UserController {
@@ -11,7 +12,9 @@ export class UserController {
 
   //cloud firestoreにユーザー情報をpushする
   @Post('/register')
-  registUser(): Promise<{ message: string }> {
-    return this.userService.registUser();
+  registUser(
+    @Body() registUserDataDto: UserRegisterInputDto,
+  ): Promise<{ message: string }> {
+    return this.userService.registUser(registUserDataDto);
   }
 }

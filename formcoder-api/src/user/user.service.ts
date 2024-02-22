@@ -2,6 +2,7 @@ import { Firestore } from '@google-cloud/firestore';
 import { HttpException, Injectable } from '@nestjs/common';
 import { User } from 'src/type/user';
 import { createHash } from 'crypto';
+import { UserRegisterInputDto } from 'src/dto/userRegisterInput.dto';
 
 @Injectable()
 export class UserService {
@@ -18,8 +19,10 @@ export class UserService {
   }
 
   //ユーザー情報をcloud firestoreにpushする
-  registUser(): Promise<{ message: string }> {
-    const pass = 'test151';
+  registUser(
+    registUserData: UserRegisterInputDto,
+  ): Promise<{ message: string }> {
+    const pass = registUserData.password;
     const hash = createHash('sha256');
     const createdAt = new Date().toISOString();
     const updatedAt = new Date().toISOString();
@@ -27,11 +30,11 @@ export class UserService {
     hash.update(pass);
     try {
       const data: User = {
-        userId: 'test',
-        name: 'test',
+        userId: registUserData.userId,
+        name: registUserData.name,
         password: hash.digest('hex'),
-        icon: 'test',
-        email: 'test@sample.com',
+        icon: registUserData.icon,
+        email: registUserData.email,
         createdAt: createdAt,
         updatedAt: updatedAt,
         finalLoginAt: finalLoginAt,
