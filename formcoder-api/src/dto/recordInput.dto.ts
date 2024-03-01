@@ -5,7 +5,7 @@ export class RecordInputDto {
   readonly userId: string;
 
   @IsNotEmpty()
-  readonly formName: string;
+  readonly formId: string;
 
   @IsNotEmpty()
   readonly fbData: {
@@ -21,4 +21,6 @@ export class RecordInputDto {
     partType: string;
     inputDataArray: string[];
   }[];
+
+  readonly connectedCode: string;
 }

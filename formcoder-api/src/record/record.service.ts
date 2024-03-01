@@ -69,13 +69,14 @@ export class RecordService {
         'record/anyone/' +
           recordInputDto.userId +
           '_' +
-          recordInputDto.formName +
+          recordInputDto.formId +
           '.json',
       );
       const data = {
         recordData: {
           fbData: recordInputDto.fbData,
           inputData: recordInputDto.inputData,
+          connectedCode: recordInputDto.connectedCode,
         },
       };
       return new Promise<{ message: string }>((resolve, reject) => {
