@@ -9,7 +9,6 @@
 ## 関連リポジトリ
 
 フロントエンドリポジトリ：https://github.com/KHashimoto3/FormCoder_FRONT  
-プロトタイプ（HCG 学会発表分）：https://github.com/KHashimoto3/HCG2023_KH
 
 ## 実行方法
 
