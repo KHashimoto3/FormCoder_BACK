@@ -10,7 +10,7 @@
 
 フロントエンドリポジトリ：https://github.com/KHashimoto3/FormCoder_FRONT  
 
-## 実行方法
+## 環境構築・実行方法
 
 ### 1. リポジトリの Clone
 
