@@ -8,7 +8,11 @@
 
 ## 関連リポジトリ
 
-フロントエンドリポジトリ：https://github.com/KHashimoto3/FormCoder_FRONT  
+フロントエンドリポジトリ：https://github.com/KHashimoto3/FormCoder_FRONT 
+
+## ディレクトリ構成
+https://docs.google.com/document/d/1-5Ya8wEucOQOCIes5BNXLsFGBXDlWzF03gaGT0_z_2s/edit?usp=sharing
+
 
 ## 使用技術
 | 領域           | 技術                                             |
