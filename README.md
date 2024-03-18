@@ -13,6 +13,11 @@
 ## ディレクトリ構成
 https://docs.google.com/document/d/1-5Ya8wEucOQOCIes5BNXLsFGBXDlWzF03gaGT0_z_2s/edit?usp=sharing
 
+## APIのエンドポイント
+https://github.com/KHashimoto3/FormCoder_FRONT/blob/develop/swagger/swagger.yaml  
+上記のコードを、  
+Swagger Editor（https://editor.swagger.io/ ）にコピペすることで確認できます。
+
 
 ## 使用技術
 | 領域           | 技術                                             |
