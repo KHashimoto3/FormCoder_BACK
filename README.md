@@ -10,6 +10,17 @@
 
 フロントエンドリポジトリ：https://github.com/KHashimoto3/FormCoder_FRONT  
 
+## 使用技術
+| 領域           | 技術                                             |
+|--------------|-------------------------------------------------|
+| フロントエンド | HTML, CSS, TypeScript, React, MUI, Vite          |
+| バックエンド   | Google Cloud, Nest.js, TypeScript                |
+| データベース   | Cloud Firestore                                 |
+| ストレージ     | Cloud Storage                                   |
+| インフラ           | Firebase, Render                                |
+| CI/CD         | Github Actions                                  |
+| ツール         | git, ESLint, Prettier, Playwright               |
+
 ## 環境構築・実行方法
 
 ### 1. リポジトリの Clone
