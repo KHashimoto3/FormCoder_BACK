@@ -65,8 +65,8 @@ export class ProgrammService {
       return execResult;
     } else {
       //エラーごとに分割して配列に格納
-      let errors: string[] = [];
-      result.compiler_error.split('prog.c:').forEach((value, index) => {
+      const errors: string[] = [];
+      result.compiler_error.split('prog.c:').forEach((value) => {
         if (value.match(/\d+:\d+:/)) {
           errors.push(value);
         }
@@ -80,7 +80,7 @@ export class ProgrammService {
   }
 
   getErrorResolve(errors: string[]): ErrorResulveMethod[] {
-    let resolveMethods: ErrorResulveMethod[] = [];
+    const resolveMethods: ErrorResulveMethod[] = [];
     //変更場所: エラーのパターンや説明を追加するにはここを編集する
     const errorTable: ErrorResulveTable[] = [
       {
@@ -185,6 +185,7 @@ export class ProgrammService {
         (errorStr.match(/error/) || errorStr.match(/warning/))
       ) {
         const place = errorStr.split(placeTmp);
+        /* eslint no-unused-vars: 0 */
         let findFlag: boolean = false;
         //パターンに一致するかどうか見る
         errorTable.map((checkError) => {
@@ -313,7 +314,7 @@ export class ProgrammService {
       {
         partType: 'IFE',
         haveChildren: false,
-        beforeElement: ['n}'],
+        beforeElement: ['\\n}'],
         afterElement: [''],
       },
     ];
@@ -371,7 +372,7 @@ export class ProgrammService {
         inputDataList,
         connectTemplateList,
       );
-      result += '\n' + connectTmp.afterElement[0];
+      result += '\\n' + connectTmp.afterElement[0];
     }
     return result;
   }
