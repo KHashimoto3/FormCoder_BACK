@@ -313,7 +313,7 @@ export class ProgrammService {
       {
         partType: 'IFE',
         haveChildren: false,
-        beforeElement: ['n}'],
+        beforeElement: ['\\n}'],
         afterElement: [''],
       },
     ];
