@@ -65,11 +65,23 @@ export class RecordService {
     }
     try {
       const bucket = this.storage.bucket(this.backetName);
+      //現在の日時を取得
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = now.getMonth() + 1;
+      const date = now.getDate();
+      const hours = now.getHours();
+      const minutes = now.getMinutes();
+      const seconds = now.getSeconds();
+
+      const timestamp = `${year}-${month}-${date}_${hours}:${minutes}:${seconds}`;
       const file = bucket.file(
         'record/anyone/' +
           recordInputDto.userId +
           '_' +
           recordInputDto.formId +
+          '_' +
+          timestamp +
           '.json',
       );
       const data = {
