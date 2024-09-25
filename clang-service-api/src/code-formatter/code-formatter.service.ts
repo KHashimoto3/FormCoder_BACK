@@ -29,7 +29,7 @@ export class CodeFormatterService {
             ),
           );
         }
-        fs.unlinkSync(tempFilePath);
+        //fs.unlinkSync(tempFilePath);
         resolve({ result: stdout });
       });
     });
