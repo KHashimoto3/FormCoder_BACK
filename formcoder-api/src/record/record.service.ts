@@ -89,6 +89,8 @@ export class RecordService {
           fbData: recordInputDto.fbData,
           inputData: recordInputDto.inputData,
           connectedCode: recordInputDto.connectedCode,
+          sequence: recordInputDto.sequence,
+          seqAnalyze: recordInputDto.seqAnalyze,
         },
       };
       return new Promise<{ message: string }>((resolve, reject) => {
