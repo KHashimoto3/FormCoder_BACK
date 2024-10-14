@@ -2,7 +2,7 @@ import * as dotenv from 'dotenv';
 import { HttpException, Injectable } from '@nestjs/common';
 import { Storage } from '@google-cloud/storage';
 import { TmpData } from 'src/type/tmpData';
-import { RecordInputDto } from 'src/dto/recordInput.dto';
+import { RecordInputDto } from '../dto/recordInput.dto';
 
 dotenv.config();
 
@@ -20,6 +20,10 @@ export class RecordService {
   }
 
   private backetName = process.env.BUCKET_NAME;
+
+  hello(): { message: string } {
+    return { message: 'Hello record service!' };
+  }
 
   //cloud storageから、解答用のテンプレートをpullする
   pullAnswerTemplate(formName: string): Promise<{ tmpData: TmpData[] }> {

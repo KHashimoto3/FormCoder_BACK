@@ -1,8 +1,8 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { UserService } from './user.service';
 import { HttpService } from '@nestjs/axios';
-import { UserRegisterInputDto } from 'src/dto/userRegisterInput.dto';
-import { LoginInputDto } from 'src/dto/loginInput.dto';
+import { UserRegisterInputDto } from '../dto/userRegisterInput.dto';
+import { LoginInputDto } from '../dto/loginInput.dto';
 import { LoginOutput } from 'src/type/loginOutput';
 
 @Controller('user')
