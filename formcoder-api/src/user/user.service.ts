@@ -2,7 +2,7 @@ import { Firestore } from '@google-cloud/firestore';
 import { HttpException, Injectable } from '@nestjs/common';
 import { User } from 'src/type/user';
 import { createHash } from 'crypto';
-import { UserRegisterInputDto } from 'src/dto/userRegisterInput.dto';
+import { UserRegisterInputDto } from '../dto/userRegisterInput.dto';
 import { LoginOutput } from 'src/type/loginOutput';
 
 @Injectable()
