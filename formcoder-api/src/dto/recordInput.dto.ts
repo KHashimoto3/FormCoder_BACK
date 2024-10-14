@@ -41,7 +41,7 @@ export class RecordInputDto {
       removed: string[];
       origin: string;
     };
-  };
+  }[];
 
   readonly seqAnalyze: any;
 }
