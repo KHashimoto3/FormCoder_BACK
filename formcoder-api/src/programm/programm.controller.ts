@@ -3,11 +3,11 @@ import { HttpService } from '@nestjs/axios';
 import { Controller } from '@nestjs/common';
 import { ProgrammService } from './programm.service';
 import { ErrorResulveMethod } from 'src/type/errorResulveMethod';
-import { ErrorResulveInputDto } from 'src/dto/errorResulveInput.dto';
+import { ErrorResulveInputDto } from '../dto/errorResulveInput.dto';
 import { ExecResult } from 'src/type/execResult';
 import { ExecError } from 'src/type/execError';
-import { execInputDto } from 'src/dto/execInput.dto';
-import { ConnectCodeInputDto } from 'src/dto/connectCodeInput.dto';
+import { execInputDto } from '../dto/execInput.dto';
+import { ConnectCodeInputDto } from '../dto/connectCodeInput.dto';
 import { ConnectedCode } from 'src/type/connectedCode';
 
 @Controller('programm')
