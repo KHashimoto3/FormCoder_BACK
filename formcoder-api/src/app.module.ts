@@ -12,10 +12,12 @@ import { ProgrammController } from './programm/programm.controller';
 import { ProgrammService } from './programm/programm.service';
 import { UserController } from './user/user.controller';
 import { UserService } from './user/user.service';
+import { SequenceController } from './sequence/sequence.controller';
+import { SequenceService } from './sequence/sequence.service';
 
 @Module({
   imports: [HttpModule],
-  controllers: [AppController, FormController, HintController, RecordController, ProgrammController, UserController],
-  providers: [AppService, FormService, HintService, RecordService, ProgrammService, UserService],
+  controllers: [AppController, FormController, HintController, RecordController, ProgrammController, UserController, SequenceController],
+  providers: [AppService, FormService, HintService, RecordService, ProgrammService, UserService, SequenceService],
 })
 export class AppModule {}
