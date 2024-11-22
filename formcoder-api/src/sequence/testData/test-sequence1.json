@@ -1,0 +1,256 @@
+{
+  "sequence": [
+    {
+      "id": 1,
+      "partType": "INC",
+      "timestamp": 6358,
+      "changeData": {
+        "from": { "line": 0, "ch": 0 },
+        "to": { "line": 0, "ch": 0 },
+        "text": ["#"],
+        "removed": [""],
+        "origin": "+input"
+      }
+    },
+    {
+      "id": 1,
+      "partType": "INC",
+      "timestamp": 6932,
+      "changeData": {
+        "from": { "line": 0, "ch": 0 },
+        "to": { "line": 0, "ch": 0 },
+        "text": ["i"],
+        "removed": [""],
+        "origin": "+input"
+      }
+    },
+    {
+      "id": 1,
+      "partType": "INC",
+      "timestamp": 7089,
+      "changeData": {
+        "from": { "line": 0, "ch": 0 },
+        "to": { "line": 0, "ch": 0 },
+        "text": ["n"],
+        "removed": [""],
+        "origin": "+input"
+      }
+    },
+    {
+      "id": 1,
+      "partType": "INC",
+      "timestamp": 7216,
+      "changeData": {
+        "from": { "line": 0, "ch": 0 },
+        "to": { "line": 0, "ch": 0 },
+        "text": ["c"],
+        "removed": [""],
+        "origin": "+input"
+      }
+    },
+    {
+      "id": 1,
+      "partType": "INC",
+      "timestamp": 7352,
+      "changeData": {
+        "from": { "line": 0, "ch": 0 },
+        "to": { "line": 0, "ch": 0 },
+        "text": ["l"],
+        "removed": [""],
+        "origin": "+input"
+      }
+    },
+    {
+      "id": 1,
+      "partType": "INC",
+      "timestamp": 7463,
+      "changeData": {
+        "from": { "line": 0, "ch": 0 },
+        "to": { "line": 0, "ch": 0 },
+        "text": ["u"],
+        "removed": [""],
+        "origin": "+input"
+      }
+    },
+    {
+      "id": 1,
+      "partType": "INC",
+      "timestamp": 7552,
+      "changeData": {
+        "from": { "line": 0, "ch": 0 },
+        "to": { "line": 0, "ch": 0 },
+        "text": ["d"],
+        "removed": [""],
+        "origin": "+input"
+      }
+    },
+    {
+      "id": 1,
+      "partType": "INC",
+      "timestamp": 7712,
+      "changeData": {
+        "from": { "line": 0, "ch": 0 },
+        "to": { "line": 0, "ch": 0 },
+        "text": ["e"],
+        "removed": [""],
+        "origin": "+input"
+      }
+    },
+    {
+      "id": 1,
+      "partType": "INC",
+      "timestamp": 7840,
+      "changeData": {
+        "from": { "line": 0, "ch": 0 },
+        "to": { "line": 0, "ch": 0 },
+        "text": [" "],
+        "removed": [""],
+        "origin": "+input"
+      }
+    },
+    {
+      "id": 1,
+      "partType": "INC",
+      "timestamp": 8465,
+      "changeData": {
+        "from": { "line": 0, "ch": 0 },
+        "to": { "line": 0, "ch": 0 },
+        "text": ["<"],
+        "removed": [""],
+        "origin": "+input"
+      }
+    },
+    {
+      "id": 1,
+      "partType": "INC",
+      "timestamp": 8760,
+      "changeData": {
+        "from": { "line": 0, "ch": 0 },
+        "to": { "line": 0, "ch": 0 },
+        "text": ["s"],
+        "removed": [""],
+        "origin": "+input"
+      }
+    },
+    {
+      "id": 1,
+      "partType": "INC",
+      "timestamp": 9008,
+      "changeData": {
+        "from": { "line": 0, "ch": 0 },
+        "to": { "line": 0, "ch": 0 },
+        "text": ["t"],
+        "removed": [""],
+        "origin": "+input"
+      }
+    },
+    {
+      "id": 1,
+      "partType": "INC",
+      "timestamp": 9184,
+      "changeData": {
+        "from": { "line": 0, "ch": 0 },
+        "to": { "line": 0, "ch": 0 },
+        "text": ["d"],
+        "removed": [""],
+        "origin": "+input"
+      }
+    },
+    {
+      "id": 1,
+      "partType": "INC",
+      "timestamp": 9319,
+      "changeData": {
+        "from": { "line": 0, "ch": 0 },
+        "to": { "line": 0, "ch": 0 },
+        "text": ["i"],
+        "removed": [""],
+        "origin": "+input"
+      }
+    },
+    {
+      "id": 1,
+      "partType": "INC",
+      "timestamp": 9472,
+      "changeData": {
+        "from": { "line": 0, "ch": 0 },
+        "to": { "line": 0, "ch": 0 },
+        "text": ["o"],
+        "removed": [""],
+        "origin": "+input"
+      }
+    },
+    {
+      "id": 1,
+      "partType": "INC",
+      "timestamp": 9864,
+      "changeData": {
+        "from": { "line": 0, "ch": 0 },
+        "to": { "line": 0, "ch": 0 },
+        "text": [",."],
+        "removed": [""],
+        "origin": "+input"
+      }
+    },
+    {
+      "id": 1,
+      "partType": "INC",
+      "timestamp": 10545,
+      "changeData": {
+        "from": { "line": 0, "ch": 0 },
+        "to": { "line": 0, "ch": 0 },
+        "text": [""],
+        "removed": ["."],
+        "origin": "+delete"
+      }
+    },
+    {
+      "id": 1,
+      "partType": "INC",
+      "timestamp": 10895,
+      "changeData": {
+        "from": { "line": 0, "ch": 0 },
+        "to": { "line": 0, "ch": 0 },
+        "text": [""],
+        "removed": [","],
+        "origin": "+delete"
+      }
+    },
+    {
+      "id": 1,
+      "partType": "INC",
+      "timestamp": 11330,
+      "changeData": {
+        "from": { "line": 0, "ch": 0 },
+        "to": { "line": 0, "ch": 0 },
+        "text": ["."],
+        "removed": [""],
+        "origin": "+input"
+      }
+    },
+    {
+      "id": 1,
+      "partType": "INC",
+      "timestamp": 11889,
+      "changeData": {
+        "from": { "line": 0, "ch": 0 },
+        "to": { "line": 0, "ch": 0 },
+        "text": ["h"],
+        "removed": [""],
+        "origin": "+input"
+      }
+    },
+    {
+      "id": 1,
+      "partType": "INC",
+      "timestamp": 12425,
+      "changeData": {
+        "from": { "line": 0, "ch": 0 },
+        "to": { "line": 0, "ch": 0 },
+        "text": [">"],
+        "removed": [""],
+        "origin": "+input"
+      }
+    }
+  ]
+}
