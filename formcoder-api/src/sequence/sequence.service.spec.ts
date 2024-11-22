@@ -7,6 +7,30 @@ const testSequenceData1 = [
   {
     id: 1,
     partType: 'INC',
+    timestamp: 9184,
+    changeData: {
+      from: { line: 0, ch: 0 },
+      to: { line: 0, ch: 0 },
+      text: ['d'],
+      removed: [''],
+      origin: '+input',
+    },
+  },
+  {
+    id: 1,
+    partType: 'INC',
+    timestamp: 9319,
+    changeData: {
+      from: { line: 0, ch: 0 },
+      to: { line: 0, ch: 0 },
+      text: ['i'],
+      removed: [''],
+      origin: '+input',
+    },
+  },
+  {
+    id: 1,
+    partType: 'INC',
     timestamp: 9472,
     changeData: {
       from: { line: 0, ch: 0 },
@@ -52,6 +76,30 @@ const testSequenceData1 = [
       origin: '+delete',
     },
   },
+  {
+    id: 1,
+    partType: 'INC',
+    timestamp: 11330,
+    changeData: {
+      from: { line: 0, ch: 0 },
+      to: { line: 0, ch: 0 },
+      text: ['.'],
+      removed: [''],
+      origin: '+input',
+    },
+  },
+  {
+    id: 1,
+    partType: 'INC',
+    timestamp: 11889,
+    changeData: {
+      from: { line: 0, ch: 0 },
+      to: { line: 0, ch: 0 },
+      text: ['h'],
+      removed: [''],
+      origin: '+input',
+    },
+  },
 ];
 
 describe('SequenceServiceのテスト', () => {
@@ -86,7 +134,7 @@ describe('SequenceServiceのテスト', () => {
   });
 
   describe('カウント関係の関数をテスト', () => {
-    describe('countInputSize', () => {
+    describe('countInputSize関数のテスト', () => {
       it('入力文字が2文字の時、文字数を正しく返す。', () => {
         const testInput = ['ab'];
         expect(service.countInputSize(testInput)).toBe(2);
@@ -103,7 +151,7 @@ describe('SequenceServiceのテスト', () => {
       });
     });
 
-    describe('countRemovedSize', () => {
+    describe('countRemovedSize関数のテスト', () => {
       it('削除文字数が2文字の時、文字数を正しく返す', () => {
         const testRemoved = ['ab'];
         expect(service.countRemovedSize(testRemoved)).toBe(2);
