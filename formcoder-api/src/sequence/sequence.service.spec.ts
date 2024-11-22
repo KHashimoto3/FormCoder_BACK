@@ -15,4 +15,8 @@ describe('SequenceService', () => {
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
+
+  test('hello', () => {
+    expect(service.hello()).toEqual({ message: 'Hello sequence service!' });
+  });
 });
