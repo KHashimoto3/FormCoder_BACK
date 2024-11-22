@@ -4,9 +4,9 @@ import { SequenceData } from 'src/type/sequenceData';
 
 type KeyData = {
   timestamp: number;
-  input: string;
+  input: string[];
   inputSize: number;
-  removed: string;
+  removed: string[];
   removedSize: number;
 };
 

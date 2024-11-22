@@ -3,6 +3,20 @@ import { SequenceService } from './sequence.service';
 
 //import testSequenceData1 from './testData/test-sequence1.json';
 
+type KeyData = {
+  timestamp: number;
+  input: string[];
+  inputSize: number;
+  removed: string[];
+  removedSize: number;
+};
+
+type DividedKeyData = {
+  startTimestamp: number;
+  endTimestamp: number;
+  keyDataList: KeyData[];
+};
+
 const testSequenceData1 = [
   {
     id: 1,
@@ -165,6 +179,164 @@ describe('SequenceServiceのテスト', () => {
       it('削除文字数が0文字の時、文字数を正しく返す', () => {
         const testRemoved = [];
         expect(service.countRemovedSize(testRemoved)).toBe(0);
+      });
+    });
+  });
+
+  describe('シーケンスデータを解析に使える形に変換する関数のテスト', () => {
+    describe('getKeyDatas関数のテスト', () => {
+      it('getKeyDatas関数が存在する。', () => {
+        expect(service.getKeyDatas).toBeDefined();
+      });
+
+      it('シーケンスデータを解析に使える形に変換できる。', () => {
+        const expectedKeyData = [
+          {
+            timestamp: 9184,
+            input: ['d'],
+            inputSize: 1,
+            removed: [''],
+            removedSize: 0,
+          },
+          {
+            timestamp: 9319,
+            input: ['i'],
+            inputSize: 1,
+            removed: [''],
+            removedSize: 0,
+          },
+          {
+            timestamp: 9472,
+            input: ['o'],
+            inputSize: 1,
+            removed: [''],
+            removedSize: 0,
+          },
+          {
+            timestamp: 9864,
+            input: [',.'],
+            inputSize: 2,
+            removed: [''],
+            removedSize: 0,
+          },
+          {
+            timestamp: 10545,
+            input: [''],
+            inputSize: 0,
+            removed: ['.'],
+            removedSize: 1,
+          },
+          {
+            timestamp: 10895,
+            input: [''],
+            inputSize: 0,
+            removed: [','],
+            removedSize: 1,
+          },
+          {
+            timestamp: 11330,
+            input: ['.'],
+            inputSize: 1,
+            removed: [''],
+            removedSize: 0,
+          },
+          {
+            timestamp: 11889,
+            input: ['h'],
+            inputSize: 1,
+            removed: [''],
+            removedSize: 0,
+          },
+        ];
+
+        const result = service.getKeyDatas(testSequenceData1);
+        expect(result).toEqual(expectedKeyData);
+      });
+    });
+  });
+
+  describe('シーケンスデータを一定の時間間隔で分割する関数のテスト', () => {
+    describe('divideKeyDatas関数のテスト', () => {
+      it('divideKeyDatas関数が存在する。', () => {
+        expect(service.divideKeyDatas).toBeDefined();
+      });
+
+      it('渡したkeyDataListを10秒間隔で分割できる。', () => {
+        const keyDataList = service.getKeyDatas(testSequenceData1);
+        const intervalTime = 10000;
+        const expectedDividedKeyDataList: DividedKeyData[] = [
+          {
+            startTimestamp: 0,
+            endTimestamp: 10000,
+            keyDataList: [
+              {
+                timestamp: 9184,
+                input: ['d'],
+                inputSize: 1,
+                removed: [''],
+                removedSize: 0,
+              },
+              {
+                timestamp: 9319,
+                input: ['i'],
+                inputSize: 1,
+                removed: [''],
+                removedSize: 0,
+              },
+              {
+                timestamp: 9472,
+                input: ['o'],
+                inputSize: 1,
+                removed: [''],
+                removedSize: 0,
+              },
+              {
+                timestamp: 9864,
+                input: [',.'],
+                inputSize: 2,
+                removed: [''],
+                removedSize: 0,
+              },
+            ],
+          },
+          {
+            startTimestamp: 10000,
+            endTimestamp: 20000,
+            keyDataList: [
+              {
+                timestamp: 10545,
+                input: [''],
+                inputSize: 0,
+                removed: ['.'],
+                removedSize: 1,
+              },
+              {
+                timestamp: 10895,
+                input: [''],
+                inputSize: 0,
+                removed: [','],
+                removedSize: 1,
+              },
+              {
+                timestamp: 11330,
+                input: ['.'],
+                inputSize: 1,
+                removed: [''],
+                removedSize: 0,
+              },
+              {
+                timestamp: 11889,
+                input: ['h'],
+                inputSize: 1,
+                removed: [''],
+                removedSize: 0,
+              },
+            ],
+          },
+        ];
+
+        const result = service.divideKeyDatas(keyDataList, intervalTime);
+        expect(result).toEqual(expectedDividedKeyDataList);
       });
     });
   });
