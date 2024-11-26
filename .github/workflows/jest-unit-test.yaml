@@ -1,0 +1,27 @@
+name: Jest Unit Test
+on:
+  push:
+    branches: develop
+  pull_request:
+    branches: develop
+jobs:
+  jest_unit_test:
+    runs-on: ubuntu-20.04
+    defaults:
+      run:
+        working-directory: ./formcoder-api
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - name: Install dependencies
+        run: npm i
+      - name: Make env file
+        run: |
+          echo "PROJECT_ID==${{ secrets.PROJECT_ID }}" >> .env
+          echo "PRIVATE_KEY==${{ secrets.PRIVATE_KEY }}" >> .env
+          echo "CLIENT_EMAIL==${{ secrets.CLIENT_EMAIL }}" >> .env
+          echo "BUCKET_NAME==${{ secrets.BUCKET_NAME }}" >> .env
+      - name: Run Jest Unit Test
+        run: npm run test
