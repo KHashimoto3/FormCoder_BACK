@@ -340,4 +340,12 @@ describe('SequenceServiceのテスト', () => {
       });
     });
   });
+
+  describe('シーケンスデータを分析する関数のテスト', () => {
+    describe('analyze関数のテスト', () => {
+      it('analyze関数が存在する。', () => {
+        expect(service.analyze).toBeDefined();
+      });
+    });
+  });
 });
