@@ -471,7 +471,7 @@ describe('SequenceServiceのテスト', () => {
         expect(service.callAnalyzeWithInterval).toBeDefined();
       });
 
-      it('渡した分数済みのシーケンスデータを、analyze関数を使って分析できる。', () => {
+      it('渡した分割済みのシーケンスデータを、analyze関数を使って分析できる。', () => {
         const sampleDividedKeyDataList: DividedKeyData[] = [
           {
             startTimestamp: 0,
@@ -590,7 +590,7 @@ describe('SequenceServiceのテスト', () => {
         expect(service.analyzeWithInterval).toBeDefined();
       });
 
-      it('渡されたシーケンスデータを、一定間隔で分析してその結果を返せる。', () => {
+      it('渡されたシーケンスデータを、10秒間隔で分析してその結果を返せる。', () => {
         const expectedAnalyzeResultList: AnalyzeSeqIntervalResult[] = [
           {
             startTimestamp: 0,
