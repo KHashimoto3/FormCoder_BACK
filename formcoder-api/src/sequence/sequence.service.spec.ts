@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { SequenceService } from './sequence.service';
 import { AnalyzeSeqIntervalResult } from 'src/type/analyzeSeqIntervalResult';
+import { SequenceData } from 'src/type/sequenceData';
 
 //import testSequenceData1 from './testData/test-sequence1.json';
 
@@ -19,7 +20,7 @@ type DividedKeyData = {
 };
 
 //dio.hの入力テストデータ（stdio.hの途中）
-const testSequenceData1 = [
+const testSequenceData1: SequenceData[] = [
   {
     id: 1,
     partType: 'INC',
@@ -580,6 +581,52 @@ describe('SequenceServiceのテスト', () => {
         const result = service.callAnalyzeWithInterval(
           sampleDividedKeyDataList,
         );
+        expect(result).toEqual(expectedAnalyzeResultList);
+      });
+    });
+
+    describe('analyzeWithInterval関数のテスト', () => {
+      it('analyzeWithInterval関数が存在する。', () => {
+        expect(service.analyzeWithInterval).toBeDefined();
+      });
+
+      it('渡されたシーケンスデータを、一定間隔で分析してその結果を返せる。', () => {
+        const expectedAnalyzeResultList: AnalyzeSeqIntervalResult[] = [
+          {
+            startTimestamp: 0,
+            endTimestamp: 10000,
+            datasCount: 4,
+            inputCharLength: 5,
+            removedCharLength: 0,
+            inputDataCount: 4,
+            removedDataCount: 0,
+            missTypeRate: 0,
+            totalTime: 10000,
+            typePerSec: 0.4,
+            totalReInputCnt: 0,
+            totalReInputTime: 0,
+            reInputRate: 0,
+            averageReInputTime: 0,
+          },
+          {
+            startTimestamp: 10000,
+            endTimestamp: 20000,
+            datasCount: 4,
+            inputCharLength: 2,
+            removedCharLength: 2,
+            inputDataCount: 2,
+            removedDataCount: 2,
+            missTypeRate: 0.5,
+            totalTime: 10000,
+            typePerSec: 0.4,
+            totalReInputCnt: 1,
+            totalReInputTime: 1344,
+            reInputRate: 0.1344,
+            averageReInputTime: 1344,
+          },
+        ];
+
+        const result = service.analyzeWithInterval(10000, testSequenceData1);
         expect(result).toEqual(expectedAnalyzeResultList);
       });
     });
