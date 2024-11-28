@@ -181,11 +181,16 @@ export class SequenceService {
   console.log("打鍵速度: ", Number.parseFloat(typePerSec).toFixed(3), "個/秒");*/
 
     //分析項目：入力ミス率
-    const missTypeRate = removedCount / (inputCount + removedCount);
-    //分析項目：書き直した時間の割合
-    const reInputRate = totalReInputTime / totalTime;
-    //分析項目：平均書き直しの時間
-    const averageReInputTime = totalReInputTime / totalReInputCnt;
+    let missTypeRate = 0;
+    let reInputRate = 0;
+    let averageReInputTime = 0;
+    if (removedCount > 0) {
+      missTypeRate = removedCount / (inputCount + removedCount);
+      //分析項目：書き直した時間の割合
+      reInputRate = totalReInputTime / totalTime;
+      //分析項目：平均書き直しの時間
+      averageReInputTime = totalReInputTime / totalReInputCnt;
+    }
 
     //集計結果を返す
     const result = {

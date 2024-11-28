@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { SequenceService } from './sequence.service';
+import { AnalyzeSeqIntervalResult } from 'src/type/analyzeSeqIntervalResult';
 
 //import testSequenceData1 from './testData/test-sequence1.json';
 
@@ -17,6 +18,7 @@ type DividedKeyData = {
   keyDataList: KeyData[];
 };
 
+//dio.hの入力テストデータ（stdio.hの途中）
 const testSequenceData1 = [
   {
     id: 1,
@@ -345,6 +347,121 @@ describe('SequenceServiceのテスト', () => {
     describe('analyze関数のテスト', () => {
       it('analyze関数が存在する。', () => {
         expect(service.analyze).toBeDefined();
+      });
+
+      const sampleDividedKeyDataList: DividedKeyData[] = [
+        {
+          startTimestamp: 0,
+          endTimestamp: 10000,
+          keyDataList: [
+            {
+              timestamp: 9184,
+              input: ['d'],
+              inputSize: 1,
+              removed: [''],
+              removedSize: 0,
+            },
+            {
+              timestamp: 9319,
+              input: ['i'],
+              inputSize: 1,
+              removed: [''],
+              removedSize: 0,
+            },
+            {
+              timestamp: 9472,
+              input: ['o'],
+              inputSize: 1,
+              removed: [''],
+              removedSize: 0,
+            },
+            {
+              timestamp: 9864,
+              input: [',.'],
+              inputSize: 2,
+              removed: [''],
+              removedSize: 0,
+            },
+          ],
+        },
+        {
+          startTimestamp: 10000,
+          endTimestamp: 20000,
+          keyDataList: [
+            {
+              timestamp: 10545,
+              input: [''],
+              inputSize: 0,
+              removed: ['.'],
+              removedSize: 1,
+            },
+            {
+              timestamp: 10895,
+              input: [''],
+              inputSize: 0,
+              removed: [','],
+              removedSize: 1,
+            },
+            {
+              timestamp: 11330,
+              input: ['.'],
+              inputSize: 1,
+              removed: [''],
+              removedSize: 0,
+            },
+            {
+              timestamp: 11889,
+              input: ['h'],
+              inputSize: 1,
+              removed: [''],
+              removedSize: 0,
+            },
+          ],
+        },
+      ];
+
+      it('削除操作のないシーケンスデータを分析できる。', () => {
+        const expectedAnalyzeResult: AnalyzeSeqIntervalResult = {
+          startTimestamp: 0,
+          endTimestamp: 10000,
+          datasCount: 4,
+          inputCharLength: 5,
+          removedCharLength: 0,
+          inputDataCount: 4,
+          removedDataCount: 0,
+          missTypeRate: 0,
+          totalTime: 10000,
+          typePerSec: 0.4,
+          totalReInputCnt: 0,
+          totalReInputTime: 0,
+          reInputRate: 0,
+          averageReInputTime: 0,
+        };
+
+        const result = service.analyze(sampleDividedKeyDataList[0]);
+        expect(result).toEqual(expectedAnalyzeResult);
+      });
+
+      it('削除操作のあるシーケンスデータを分析できる。', () => {
+        const expectedAnalyzeResult: AnalyzeSeqIntervalResult = {
+          startTimestamp: 10000,
+          endTimestamp: 20000,
+          datasCount: 4,
+          inputCharLength: 2,
+          removedCharLength: 2,
+          inputDataCount: 2,
+          removedDataCount: 2,
+          missTypeRate: 0.5,
+          totalTime: 10000,
+          typePerSec: 0.4,
+          totalReInputCnt: 1,
+          totalReInputTime: 1344,
+          reInputRate: 0.1344,
+          averageReInputTime: 1344,
+        };
+
+        const result = service.analyze(sampleDividedKeyDataList[1]);
+        expect(result).toEqual(expectedAnalyzeResult);
       });
     });
   });
