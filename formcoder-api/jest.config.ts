@@ -11,7 +11,9 @@ const config: Config = {
     '^.+\\.(t|j)s$': 'ts-jest',
   },
   testMatch: ['<rootDir>/sequence/sequence.service.spec.ts'],
-  collectCoverageFrom: ['**/*.(t|j)s'],
+  collectCoverage: true,
+  collectCoverageFrom: ['<rootDir>/sequence/sequence.service.spec.ts'],
+  coverageReporters: ['lcov', 'text'],
   coverageDirectory: '../coverage',
   testEnvironment: 'node',
 };

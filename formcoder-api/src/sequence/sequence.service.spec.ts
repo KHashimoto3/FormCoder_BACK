@@ -343,7 +343,7 @@ describe('SequenceServiceのテスト', () => {
     });
   });
 
-  describe('シーケンスデータを分析する関数のテスト', () => {
+  describe('シーケンスデータを一定間隔で分析する関数のテスト', () => {
     describe('analyze関数のテスト', () => {
       it('analyze関数が存在する。', () => {
         expect(service.analyze).toBeDefined();
@@ -462,6 +462,125 @@ describe('SequenceServiceのテスト', () => {
 
         const result = service.analyze(sampleDividedKeyDataList[1]);
         expect(result).toEqual(expectedAnalyzeResult);
+      });
+    });
+
+    describe('callAnalyzeWithInterval関数のテスト', () => {
+      it('callAnalyzeWithInterval関数が存在する。', () => {
+        expect(service.callAnalyzeWithInterval).toBeDefined();
+      });
+
+      it('渡した分数済みのシーケンスデータを、analyze関数を使って分析できる。', () => {
+        const sampleDividedKeyDataList: DividedKeyData[] = [
+          {
+            startTimestamp: 0,
+            endTimestamp: 10000,
+            keyDataList: [
+              {
+                timestamp: 9184,
+                input: ['d'],
+                inputSize: 1,
+                removed: [''],
+                removedSize: 0,
+              },
+              {
+                timestamp: 9319,
+                input: ['i'],
+                inputSize: 1,
+                removed: [''],
+                removedSize: 0,
+              },
+              {
+                timestamp: 9472,
+                input: ['o'],
+                inputSize: 1,
+                removed: [''],
+                removedSize: 0,
+              },
+              {
+                timestamp: 9864,
+                input: [',.'],
+                inputSize: 2,
+                removed: [''],
+                removedSize: 0,
+              },
+            ],
+          },
+          {
+            startTimestamp: 10000,
+            endTimestamp: 20000,
+            keyDataList: [
+              {
+                timestamp: 10545,
+                input: [''],
+                inputSize: 0,
+                removed: ['.'],
+                removedSize: 1,
+              },
+              {
+                timestamp: 10895,
+                input: [''],
+                inputSize: 0,
+                removed: [','],
+                removedSize: 1,
+              },
+              {
+                timestamp: 11330,
+                input: ['.'],
+                inputSize: 1,
+                removed: [''],
+                removedSize: 0,
+              },
+              {
+                timestamp: 11889,
+                input: ['h'],
+                inputSize: 1,
+                removed: [''],
+                removedSize: 0,
+              },
+            ],
+          },
+        ];
+
+        const expectedAnalyzeResultList: AnalyzeSeqIntervalResult[] = [
+          {
+            startTimestamp: 0,
+            endTimestamp: 10000,
+            datasCount: 4,
+            inputCharLength: 5,
+            removedCharLength: 0,
+            inputDataCount: 4,
+            removedDataCount: 0,
+            missTypeRate: 0,
+            totalTime: 10000,
+            typePerSec: 0.4,
+            totalReInputCnt: 0,
+            totalReInputTime: 0,
+            reInputRate: 0,
+            averageReInputTime: 0,
+          },
+          {
+            startTimestamp: 10000,
+            endTimestamp: 20000,
+            datasCount: 4,
+            inputCharLength: 2,
+            removedCharLength: 2,
+            inputDataCount: 2,
+            removedDataCount: 2,
+            missTypeRate: 0.5,
+            totalTime: 10000,
+            typePerSec: 0.4,
+            totalReInputCnt: 1,
+            totalReInputTime: 1344,
+            reInputRate: 0.1344,
+            averageReInputTime: 1344,
+          },
+        ];
+
+        const result = service.callAnalyzeWithInterval(
+          sampleDividedKeyDataList,
+        );
+        expect(result).toEqual(expectedAnalyzeResultList);
       });
     });
   });
