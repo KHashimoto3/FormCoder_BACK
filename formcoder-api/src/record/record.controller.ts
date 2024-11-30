@@ -14,7 +14,7 @@ export class RecordController {
   @Post('/')
   pushAnswerData(
     @Body() recordInputDto: RecordInputDto,
-  ): Promise<{ message: string }> {
+  ): Promise<{ message: string; recordId: string }> {
     return this.recordService.pushAnswerData(recordInputDto);
   }
 
