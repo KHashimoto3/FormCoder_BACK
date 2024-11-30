@@ -3,6 +3,7 @@ import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { RecordService } from './record.service';
 import { TmpData } from 'src/type/tmpData';
 import { RecordInputDto } from '../dto/recordInput.dto';
+import { RecordData } from 'src/type/recordData';
 
 @Controller('record')
 export class RecordController {
@@ -10,6 +11,13 @@ export class RecordController {
     private readonly httpService: HttpService,
     private readonly recordService: RecordService,
   ) {}
+
+  @Get('/')
+  getAnswerData(
+    @Query('recordId') recordId: string,
+  ): Promise<{ recordData: RecordData }> {
+    return this.recordService.pullAnswerData(recordId);
+  }
 
   @Post('/')
   pushAnswerData(
