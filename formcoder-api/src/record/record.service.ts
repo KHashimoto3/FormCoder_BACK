@@ -4,6 +4,7 @@ import { Firestore } from '@google-cloud/firestore';
 import { Storage } from '@google-cloud/storage';
 import { TmpData } from 'src/type/tmpData';
 import { RecordInputDto } from '../dto/recordInput.dto';
+import { RecordData } from 'src/type/recordData';
 
 dotenv.config();
 
@@ -101,6 +102,8 @@ export class RecordService {
       const file = bucket.file('record/anyone/' + fileName);
       const data = {
         recordData: {
+          userId: recordInputDto.userId,
+          formId: recordInputDto.formId,
           fbData: recordInputDto.fbData,
           inputData: recordInputDto.inputData,
           connectedCode: recordInputDto.connectedCode,
@@ -143,6 +146,55 @@ export class RecordService {
           });
         },
       );
+    } catch (error) {
+      const errMessage = '何らかのエラーが発生しました。';
+      console.log(error.message);
+      throw new HttpException(errMessage, 500);
+    }
+  }
+
+  //cloud storageから、指定されたIDの解答データをpullする
+  pullAnswerData(recordId: string): Promise<{ recordData: RecordData }> {
+    if (recordId === undefined) {
+      const errMessage = 'パラメータrecordIdは必須です。';
+      throw new HttpException(errMessage, 400);
+    }
+
+    try {
+      //firestoreから、指定されたIDのデータを取得
+      const recordRef = this.firestore.collection('learn-record').doc(recordId);
+      return new Promise<{ recordData: RecordData }>((resolve, reject) => {
+        recordRef.get().then((doc) => {
+          if (doc.exists) {
+            const data = doc.data();
+            const bucket = this.storage.bucket(this.backetName);
+            const file = bucket.file('record/anyone/' + data.recordFileName);
+            file.download((err, contents) => {
+              if (err) {
+                //ファイルが見つからなかった場合
+                if (err.message.includes('No such object')) {
+                  const errMessage =
+                    '指定されたIDの記録データ(JSON)が見つかりません。';
+                  console.log(err.message);
+                  reject(new HttpException(errMessage, 404));
+                }
+                const errMessage = 'プル時にエラーが発生しました！';
+                console.log(err.message);
+                reject(new HttpException(errMessage, 500));
+              } else {
+                const recievedData = JSON.parse(contents.toString());
+                const recordData = recievedData.recordData;
+                resolve({ recordData: recordData });
+              }
+            });
+          } else {
+            //cloud firestoreにデータが見つからなかった場合
+            const errMessage = '指定されたIDの記録データが見つかりません。';
+            console.log(errMessage);
+            reject(new HttpException(errMessage, 404));
+          }
+        });
+      });
     } catch (error) {
       const errMessage = '何らかのエラーが発生しました。';
       console.log(error.message);
