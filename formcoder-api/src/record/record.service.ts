@@ -1,14 +1,17 @@
 import * as dotenv from 'dotenv';
 import { HttpException, Injectable } from '@nestjs/common';
+import { Firestore } from '@google-cloud/firestore';
 import { Storage } from '@google-cloud/storage';
 import { TmpData } from 'src/type/tmpData';
 import { RecordInputDto } from '../dto/recordInput.dto';
+import { RecordData } from 'src/type/recordData';
 
 dotenv.config();
 
 @Injectable()
 export class RecordService {
   private storage: Storage;
+  private firestore: Firestore;
   constructor() {
     this.storage = new Storage({
       projectId: process.env.PROJECT_ID,
@@ -16,6 +19,14 @@ export class RecordService {
         client_email: process.env.CLIENT_EMAIL,
         private_key: process.env.PRIVATE_KEY.replace(/\\n/g, '\n'),
       },
+    });
+    this.firestore = new Firestore({
+      projectId: process.env.PROJECT_ID,
+      credentials: {
+        client_email: process.env.CLIENT_EMAIL,
+        private_key: process.env.PRIVATE_KEY.replace(/\\n/g, '\n'),
+      },
+      databaseId: 'form-hint-db',
     });
   }
 
@@ -62,7 +73,9 @@ export class RecordService {
   }
 
   //cloud storageに、解答データをpushする
-  pushAnswerData(recordInputDto: RecordInputDto): Promise<{ message: string }> {
+  pushAnswerData(
+    recordInputDto: RecordInputDto,
+  ): Promise<{ message: string; recordId: string }> {
     if (recordInputDto === undefined) {
       const errMessage = '必要なデータが渡されていません。';
       throw new HttpException(errMessage, 400);
@@ -79,17 +92,18 @@ export class RecordService {
       const seconds = now.getSeconds();
 
       const timestamp = `${year}-${month}-${date}_${hours}:${minutes}:${seconds}`;
-      const file = bucket.file(
-        'record/anyone/' +
-          recordInputDto.userId +
-          '_' +
-          recordInputDto.formId +
-          '_' +
-          timestamp +
-          '.json',
-      );
+      const fileName =
+        recordInputDto.userId +
+        '_' +
+        recordInputDto.formId +
+        '_' +
+        timestamp +
+        '.json';
+      const file = bucket.file('record/anyone/' + fileName);
       const data = {
         recordData: {
+          userId: recordInputDto.userId,
+          formId: recordInputDto.formId,
           fbData: recordInputDto.fbData,
           inputData: recordInputDto.inputData,
           connectedCode: recordInputDto.connectedCode,
@@ -97,14 +111,87 @@ export class RecordService {
           seqAnalyze: recordInputDto.seqAnalyze,
         },
       };
-      return new Promise<{ message: string }>((resolve, reject) => {
-        file.save(JSON.stringify(data), (err) => {
-          if (err) {
-            const errMessage = 'アップロード中にエラーが発生しました！';
-            console.log(err.message);
-            reject(new HttpException(errMessage, 500));
+      //firestoreに、記録データを保存
+      const recordRef = this.firestore.collection('learn-record').doc();
+      const generateId = recordRef.id;
+      const learnRecordData = {
+        userId: recordInputDto.userId,
+        recordFileName: fileName,
+        createdAt: timestamp,
+        memo: '',
+      };
+      return new Promise<{ message: string; recordId: string }>(
+        (resolve, reject) => {
+          file.save(JSON.stringify(data), (err) => {
+            if (err) {
+              const errMessage = 'アップロード中にエラーが発生しました！';
+              console.log(err.message);
+              reject(new HttpException(errMessage, 500));
+            } else {
+              recordRef
+                .set(learnRecordData)
+                .then(() => {
+                  resolve({
+                    message: 'アップロードに成功しました。',
+                    recordId: generateId,
+                  });
+                })
+                .catch((error) => {
+                  console.log(error.message);
+                  reject(
+                    new HttpException('記録データの保存に失敗しました。', 500),
+                  );
+                });
+            }
+          });
+        },
+      );
+    } catch (error) {
+      const errMessage = '何らかのエラーが発生しました。';
+      console.log(error.message);
+      throw new HttpException(errMessage, 500);
+    }
+  }
+
+  //cloud storageから、指定されたIDの解答データをpullする
+  pullAnswerData(recordId: string): Promise<{ recordData: RecordData }> {
+    if (recordId === undefined) {
+      const errMessage = 'パラメータrecordIdは必須です。';
+      throw new HttpException(errMessage, 400);
+    }
+
+    try {
+      //firestoreから、指定されたIDのデータを取得
+      const recordRef = this.firestore.collection('learn-record').doc(recordId);
+      return new Promise<{ recordData: RecordData }>((resolve, reject) => {
+        recordRef.get().then((doc) => {
+          if (doc.exists) {
+            const data = doc.data();
+            const bucket = this.storage.bucket(this.backetName);
+            const file = bucket.file('record/anyone/' + data.recordFileName);
+            file.download((err, contents) => {
+              if (err) {
+                //ファイルが見つからなかった場合
+                if (err.message.includes('No such object')) {
+                  const errMessage =
+                    '指定されたIDの記録データ(JSON)が見つかりません。';
+                  console.log(err.message);
+                  reject(new HttpException(errMessage, 404));
+                }
+                const errMessage = 'プル時にエラーが発生しました！';
+                console.log(err.message);
+                reject(new HttpException(errMessage, 500));
+              } else {
+                const recievedData = JSON.parse(contents.toString());
+                const recordData = recievedData.recordData;
+                resolve({ recordData: recordData });
+              }
+            });
           } else {
-            resolve({ message: 'アップロードに成功しました。' });
+            //cloud firestoreにデータが見つからなかった場合
+            const errMessage = '指定されたIDの記録データが見つかりません。';
+            console.log(errMessage);
+            reject(new HttpException(errMessage, 404));
           }
         });
       });
