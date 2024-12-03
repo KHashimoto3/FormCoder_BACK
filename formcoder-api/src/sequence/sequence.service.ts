@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { AnalyzeSeqIntervalResult } from 'src/type/analyzeSeqIntervalResult';
+import { AnalyzeSeqPartResult } from 'src/type/analyzeSeqPartResult';
 import { SequenceData } from 'src/type/sequenceData';
 
 type KeyData = {
@@ -13,6 +14,16 @@ type KeyData = {
 type DividedKeyData = {
   startTimestamp: number;
   endTimestamp: number;
+  keyDataList: KeyData[];
+};
+
+type KeyDatasWithPart = {
+  partType: string;
+  keyData: KeyData;
+};
+
+type DividedKeyDataWithPart = {
+  partType: string;
   keyDataList: KeyData[];
 };
 
@@ -31,6 +42,32 @@ export class SequenceService {
     const keyDataList = this.getKeyDatas(sequence);
     const dividedKeyDataList = this.divideKeyDatas(keyDataList, intervalTime);
     const analyzeResultList = this.callAnalyzeWithInterval(dividedKeyDataList);
+    return analyzeResultList;
+  }
+
+  //[B]フォームの入力欄ごとにシーケンスの分析を行う
+  getAnalyticsByPart(sequence: SequenceData[]): AnalyzeSeqPartResult[] {
+    const keyDatasWithPartList: KeyDatasWithPart[] = [];
+    sequence.map((value) => {
+      const values = [value];
+      const keyDatas = this.getKeyDatas(values);
+      const keyDatasByPart: KeyDatasWithPart = {
+        partType: value.partType,
+        keyData: {
+          timestamp: keyDatas[0].timestamp,
+          input: keyDatas[0].input,
+          inputSize: keyDatas[0].inputSize,
+          removed: keyDatas[0].removed,
+          removedSize: keyDatas[0].removedSize,
+        },
+      };
+      keyDatasWithPartList.push(keyDatasByPart);
+    });
+
+    //keyDatasByPartを、partごとに分割する
+    const dividedKeyDataList = this.divideKeyDatasByPart(keyDatasWithPartList);
+    const analyzeResultList = this.callAnalyzeByPart(dividedKeyDataList);
+
     return analyzeResultList;
   }
 
@@ -114,7 +151,73 @@ export class SequenceService {
     return analyzeResultList;
   }
 
-  //与えられた範囲で、分析を行う
+  //[B-1]パートごとにシーケンスデータを振り分ける
+  divideKeyDatasByPart(
+    keyDatasWithPart: KeyDatasWithPart[],
+  ): DividedKeyDataWithPart[] {
+    const dividedKeyDatasByPartList: DividedKeyDataWithPart[] = [];
+
+    //keyDatasを、partごとに分割する
+    keyDatasWithPart.map((dividedKeyData) => {
+      const partType = dividedKeyData.partType;
+      const keyDataList = dividedKeyData.keyData;
+      if (this.isExistPart(keyDatasWithPart, partType)) {
+        dividedKeyDatasByPartList.map((keyDataByPart) => {
+          if (keyDataByPart.partType === partType) {
+            keyDataByPart.keyDataList.push(keyDataList);
+          }
+        });
+      } else {
+        const dividedKeyDataByPart: DividedKeyDataWithPart = {
+          partType: partType,
+          keyDataList: [keyDataList],
+        };
+        dividedKeyDatasByPartList.push(dividedKeyDataByPart);
+      }
+    });
+
+    return dividedKeyDatasByPartList;
+  }
+
+  //keyDatasByPart内に、渡されたpartが存在するかどうか
+  isExistPart(keyDatasByPart: any, part: string) {
+    return keyDatasByPart.some((keyDataByPart) => keyDataByPart.part === part);
+  }
+
+  //[B-2]パートごとにanalyzeを読んで、分析を行う
+  callAnalyzeByPart(
+    dividedKeyDataList: DividedKeyDataWithPart[],
+  ): AnalyzeSeqPartResult[] {
+    const analyzeResultList: AnalyzeSeqPartResult[] = [];
+
+    dividedKeyDataList.map((dividedKeyData) => {
+      const [startTimestamp, endTimestamp] = this.getPartTimestamps(
+        dividedKeyData.keyDataList,
+      );
+      const analyzeInput = {
+        startTimestamp: startTimestamp,
+        endTimestamp: endTimestamp,
+        keyDataList: dividedKeyData.keyDataList,
+      };
+      const analyzeResult = this.analyze(analyzeInput);
+      const analyzeResultByPart = {
+        partType: dividedKeyData.partType,
+        analyzeResult: analyzeResult,
+      };
+      analyzeResultList.push(analyzeResultByPart);
+    });
+
+    return analyzeResultList;
+  }
+
+  //渡されたパートのstartTimestampとendTimestampを取得
+  getPartTimestamps(keyDataList: KeyData[]): [number, number] {
+    const startTimestamp = keyDataList[0].timestamp;
+    const endTimestamp = keyDataList[keyDataList.length - 1].timestamp;
+    return [startTimestamp, endTimestamp];
+  }
+
+  //[A, B]与えられた範囲で、分析を行う
   analyze(dividedKeyDataList: DividedKeyData): AnalyzeSeqIntervalResult {
     const startTimestamp = dividedKeyDataList.startTimestamp;
     const endTimestamp = dividedKeyDataList.endTimestamp;
