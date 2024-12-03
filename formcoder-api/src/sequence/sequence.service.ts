@@ -22,7 +22,7 @@ export class SequenceService {
     return { message: 'Hello sequence service!' };
   }
 
-  //時間ごとにシーケンスの分析を行う
+  //[A]時間ごとにシーケンスの分析を行う
   analyzeWithInterval(
     intervalTime: number,
     sequence: SequenceData[],
@@ -34,7 +34,7 @@ export class SequenceService {
     return analyzeResultList;
   }
 
-  //①シーケンスデータを解析に使える形に変換する
+  //[A-1]シーケンスデータを解析に使える形に変換する
   getKeyDatas(values: SequenceData[]): KeyData[] {
     const keyDatas = [];
     values.map((value) => {
@@ -73,7 +73,7 @@ export class SequenceService {
     return size;
   }
 
-  //②一定の時間間隔で、keyDataListを分割する
+  //[A-2]一定の時間間隔で、keyDataListを分割する
   divideKeyDatas(keyDatas: KeyData[], intervalTime: number): DividedKeyData[] {
     let analyzeTargetFrom = 0;
     let analyzeTargetTo = intervalTime; //与えられた秒間隔で、分析する
@@ -102,7 +102,7 @@ export class SequenceService {
     return dividedKeyDataList;
   }
 
-  //③dividedKeyDataListを元に、時間ごとにシーケンスの分析を行う
+  //[A-3]dividedKeyDataListを元に、時間ごとにシーケンスの分析を行う
   callAnalyzeWithInterval(
     dividedKeyDataList: DividedKeyData[],
   ): AnalyzeSeqIntervalResult[] {
