@@ -19,6 +19,17 @@ type DividedKeyData = {
   keyDataList: KeyData[];
 };
 
+type KeyDatasWithPart = {
+  partType: string;
+  keyData: KeyData;
+};
+
+//パートごとの分割に使う型
+type DividedKeyDataWithPart = {
+  partType: string;
+  keyDataList: KeyData[];
+};
+
 //dio.hの入力テストデータ（stdio.hの途中）
 const testSequenceData1: SequenceData[] = [
   {
@@ -113,6 +124,105 @@ const testSequenceData1: SequenceData[] = [
       from: { line: 0, ch: 0 },
       to: { line: 0, ch: 0 },
       text: ['h'],
+      removed: [''],
+      origin: '+input',
+    },
+  },
+];
+
+const testSequenceData2: SequenceData[] = [
+  {
+    id: 1,
+    partType: 'INC',
+    timestamp: 10726,
+    changeData: {
+      from: { line: 0, ch: 0 },
+      to: { line: 0, ch: 0 },
+      text: ['g'],
+      removed: [''],
+      origin: '+input',
+    },
+  },
+  {
+    id: 1,
+    partType: 'INC',
+    timestamp: 11272,
+    changeData: {
+      from: { line: 0, ch: 0 },
+      to: { line: 0, ch: 0 },
+      text: [''],
+      removed: ['g'],
+      origin: '+delete',
+    },
+  },
+  {
+    id: 1,
+    partType: 'INC',
+    timestamp: 11792,
+    changeData: {
+      from: { line: 0, ch: 0 },
+      to: { line: 0, ch: 0 },
+      text: ['h'],
+      removed: [''],
+      origin: '+input',
+    },
+  },
+  {
+    id: 1,
+    partType: 'INC',
+    timestamp: 12239,
+    changeData: {
+      from: { line: 0, ch: 0 },
+      to: { line: 0, ch: 0 },
+      text: ['>'],
+      removed: [''],
+      origin: '+input',
+    },
+  },
+  {
+    id: 21,
+    partType: 'DAT',
+    timestamp: 13677,
+    changeData: {
+      from: { line: 0, ch: 0 },
+      to: { line: 0, ch: 0 },
+      text: ['i'],
+      removed: [''],
+      origin: '+input',
+    },
+  },
+  {
+    id: 21,
+    partType: 'DAT',
+    timestamp: 13819,
+    changeData: {
+      from: { line: 0, ch: 0 },
+      to: { line: 0, ch: 0 },
+      text: ['n'],
+      removed: [''],
+      origin: '+input',
+    },
+  },
+  {
+    id: 21,
+    partType: 'DAT',
+    timestamp: 13930,
+    changeData: {
+      from: { line: 0, ch: 0 },
+      to: { line: 0, ch: 0 },
+      text: ['t'],
+      removed: [''],
+      origin: '+input',
+    },
+  },
+  {
+    id: 21,
+    partType: 'DAT',
+    timestamp: 14041,
+    changeData: {
+      from: { line: 0, ch: 0 },
+      to: { line: 0, ch: 0 },
+      text: [' '],
       removed: [''],
       origin: '+input',
     },
@@ -457,7 +567,7 @@ describe('SequenceServiceのテスト', () => {
           typePerSec: 0.4,
           totalReInputCnt: 1,
           totalReInputTime: 1344,
-          reInputRate: 0.1344,
+          reInputRate: 0.13,
           averageReInputTime: 1344,
         };
 
@@ -573,7 +683,7 @@ describe('SequenceServiceのテスト', () => {
             typePerSec: 0.4,
             totalReInputCnt: 1,
             totalReInputTime: 1344,
-            reInputRate: 0.1344,
+            reInputRate: 0.13,
             averageReInputTime: 1344,
           },
         ];
@@ -621,13 +731,405 @@ describe('SequenceServiceのテスト', () => {
             typePerSec: 0.4,
             totalReInputCnt: 1,
             totalReInputTime: 1344,
-            reInputRate: 0.1344,
+            reInputRate: 0.13,
             averageReInputTime: 1344,
           },
         ];
 
         const result = service.analyzeWithInterval(10000, testSequenceData1);
         expect(result).toEqual(expectedAnalyzeResultList);
+      });
+    });
+  });
+
+  describe('渡されたシーケンスデータから、開始と終了のtimestampを返す関数のテスト', () => {
+    describe('getPartTimestamps関数のテスト', () => {
+      it('getPartTimestamps関数が存在する。', () => {
+        expect(service.getPartTimestamps).toBeDefined();
+      });
+
+      it('渡されたシーケンスデータから、開始と終了のtimestampを正しく返す。', () => {
+        const sampleDividedKeyData: DividedKeyDataWithPart = {
+          partType: 'INC',
+          keyDataList: [
+            {
+              timestamp: 10726,
+              input: ['g'],
+              inputSize: 1,
+              removed: [''],
+              removedSize: 0,
+            },
+            {
+              timestamp: 11272,
+              input: [''],
+              inputSize: 0,
+              removed: ['g'],
+              removedSize: 1,
+            },
+            {
+              timestamp: 11792,
+              input: ['h'],
+              inputSize: 1,
+              removed: [''],
+              removedSize: 0,
+            },
+            {
+              timestamp: 12239,
+              input: ['>'],
+              inputSize: 1,
+              removed: [''],
+              removedSize: 0,
+            },
+          ],
+        };
+
+        const expectedTimestamps = {
+          startTimestamp: 10726,
+          endTimestamp: 12239,
+        };
+
+        const result = service.getPartTimestamps(
+          sampleDividedKeyData.keyDataList,
+        );
+        expect(result).toEqual(expectedTimestamps);
+      });
+    });
+  });
+
+  describe('フォームの入力欄ごとにシーケンスの分析を行う関数のテスト', () => {
+    describe('callAnalyzeByPart関数のテスト', () => {
+      it('callAnalyzeByPart関数が存在する。', () => {
+        expect(service.callAnalyzeByPart).toBeDefined();
+      });
+
+      it('渡された分割済みのシーケンスデータを、analyze関数を使って正しく分析できる。', () => {
+        const sampleDividedKeyDataList: DividedKeyDataWithPart[] = [
+          {
+            partType: 'INC',
+            keyDataList: [
+              {
+                timestamp: 10726,
+                input: ['g'],
+                inputSize: 1,
+                removed: [''],
+                removedSize: 0,
+              },
+              {
+                timestamp: 11272,
+                input: [''],
+                inputSize: 0,
+                removed: ['g'],
+                removedSize: 1,
+              },
+              {
+                timestamp: 11792,
+                input: ['h'],
+                inputSize: 1,
+                removed: [''],
+                removedSize: 0,
+              },
+              {
+                timestamp: 12239,
+                input: ['>'],
+                inputSize: 1,
+                removed: [''],
+                removedSize: 0,
+              },
+            ],
+          },
+          {
+            partType: 'DAT',
+            keyDataList: [
+              {
+                timestamp: 13677,
+                input: ['i'],
+                inputSize: 1,
+                removed: [''],
+                removedSize: 0,
+              },
+              {
+                timestamp: 13819,
+                input: ['n'],
+                inputSize: 1,
+                removed: [''],
+                removedSize: 0,
+              },
+              {
+                timestamp: 13930,
+                input: ['t'],
+                inputSize: 1,
+                removed: [''],
+                removedSize: 0,
+              },
+              {
+                timestamp: 14041,
+                input: [' '],
+                inputSize: 1,
+                removed: [''],
+                removedSize: 0,
+              },
+            ],
+          },
+        ];
+
+        const expectedAnalyzeSeqPartResult = [
+          {
+            partType: 'INC',
+            analyzeResult: {
+              startTimestamp: 10726,
+              endTimestamp: 12239,
+              datasCount: 4,
+              inputCharLength: 3,
+              removedCharLength: 1,
+              inputDataCount: 3,
+              removedDataCount: 1,
+              missTypeRate: 0.25,
+              totalTime: 1513,
+              typePerSec: 2.644,
+              totalReInputCnt: 1,
+              totalReInputTime: 520,
+              reInputRate: 0.34,
+              averageReInputTime: 520,
+            },
+          },
+          {
+            partType: 'DAT',
+            analyzeResult: {
+              startTimestamp: 13677,
+              endTimestamp: 14041,
+              datasCount: 4,
+              inputCharLength: 4,
+              removedCharLength: 0,
+              inputDataCount: 4,
+              removedDataCount: 0,
+              missTypeRate: 0,
+              totalTime: 364,
+              typePerSec: 10.989,
+              totalReInputCnt: 0,
+              totalReInputTime: 0,
+              reInputRate: 0,
+              averageReInputTime: 0,
+            },
+          },
+        ];
+
+        const result = service.callAnalyzeByPart(sampleDividedKeyDataList);
+        expect(result).toEqual(expectedAnalyzeSeqPartResult);
+      });
+    });
+
+    describe('divideKeyDatasByPart関数のテスト', () => {
+      it('divideKeyDatasByPart関数が存在する。', () => {
+        expect(service.divideKeyDatasByPart).toBeDefined();
+      });
+
+      it('渡されたシーケンスデータを、partTypeごとに分割できる。', () => {
+        const sampleKeyDatasWithPart: KeyDatasWithPart[] = [
+          {
+            partType: 'INC',
+            keyData: {
+              timestamp: 10726,
+              input: ['g'],
+              inputSize: 1,
+              removed: [''],
+              removedSize: 0,
+            },
+          },
+          {
+            partType: 'INC',
+            keyData: {
+              timestamp: 11272,
+              input: [''],
+              inputSize: 0,
+              removed: ['g'],
+              removedSize: 1,
+            },
+          },
+          {
+            partType: 'INC',
+            keyData: {
+              timestamp: 11792,
+              input: ['h'],
+              inputSize: 1,
+              removed: [''],
+              removedSize: 0,
+            },
+          },
+          {
+            partType: 'INC',
+            keyData: {
+              timestamp: 12239,
+              input: ['>'],
+              inputSize: 1,
+              removed: [''],
+              removedSize: 0,
+            },
+          },
+          {
+            partType: 'DAT',
+            keyData: {
+              timestamp: 13677,
+              input: ['i'],
+              inputSize: 1,
+              removed: [''],
+              removedSize: 0,
+            },
+          },
+          {
+            partType: 'DAT',
+            keyData: {
+              timestamp: 13819,
+              input: ['n'],
+              inputSize: 1,
+              removed: [''],
+              removedSize: 0,
+            },
+          },
+          {
+            partType: 'DAT',
+            keyData: {
+              timestamp: 13930,
+              input: ['t'],
+              inputSize: 1,
+              removed: [''],
+              removedSize: 0,
+            },
+          },
+          {
+            partType: 'DAT',
+            keyData: {
+              timestamp: 14041,
+              input: [' '],
+              inputSize: 1,
+              removed: [''],
+              removedSize: 0,
+            },
+          },
+        ];
+
+        const expectedDividedKeyDataList: DividedKeyDataWithPart[] = [
+          {
+            partType: 'INC',
+            keyDataList: [
+              {
+                timestamp: 10726,
+                input: ['g'],
+                inputSize: 1,
+                removed: [''],
+                removedSize: 0,
+              },
+              {
+                timestamp: 11272,
+                input: [''],
+                inputSize: 0,
+                removed: ['g'],
+                removedSize: 1,
+              },
+              {
+                timestamp: 11792,
+                input: ['h'],
+                inputSize: 1,
+                removed: [''],
+                removedSize: 0,
+              },
+              {
+                timestamp: 12239,
+                input: ['>'],
+                inputSize: 1,
+                removed: [''],
+                removedSize: 0,
+              },
+            ],
+          },
+          {
+            partType: 'DAT',
+            keyDataList: [
+              {
+                timestamp: 13677,
+                input: ['i'],
+                inputSize: 1,
+                removed: [''],
+                removedSize: 0,
+              },
+              {
+                timestamp: 13819,
+                input: ['n'],
+                inputSize: 1,
+                removed: [''],
+                removedSize: 0,
+              },
+              {
+                timestamp: 13930,
+                input: ['t'],
+                inputSize: 1,
+                removed: [''],
+                removedSize: 0,
+              },
+              {
+                timestamp: 14041,
+                input: [' '],
+                inputSize: 1,
+                removed: [''],
+                removedSize: 0,
+              },
+            ],
+          },
+        ];
+
+        const result = service.divideKeyDatasByPart(sampleKeyDatasWithPart);
+        expect(result).toEqual(expectedDividedKeyDataList);
+      });
+    });
+
+    describe('getAnalyticsByPart関数のテスト', () => {
+      it('getAnalyticsByPart関数が存在する。', () => {
+        expect(service.getAnalyticsByPart).toBeDefined();
+      });
+
+      it('渡されたシーケンスデータを、partTypeごとに分析し、分析結果を正しく返せる。', () => {
+        const expectedAnalyzeSeqPartResult = [
+          {
+            partType: 'INC',
+            analyzeResult: {
+              startTimestamp: 10726,
+              endTimestamp: 12239,
+              datasCount: 4,
+              inputCharLength: 3,
+              removedCharLength: 1,
+              inputDataCount: 3,
+              removedDataCount: 1,
+              missTypeRate: 0.25,
+              totalTime: 1513,
+              typePerSec: 2.644,
+              totalReInputCnt: 1,
+              totalReInputTime: 520,
+              reInputRate: 0.34,
+              averageReInputTime: 520,
+            },
+          },
+          {
+            partType: 'DAT',
+            analyzeResult: {
+              startTimestamp: 13677,
+              endTimestamp: 14041,
+              datasCount: 4,
+              inputCharLength: 4,
+              removedCharLength: 0,
+              inputDataCount: 4,
+              removedDataCount: 0,
+              missTypeRate: 0,
+              totalTime: 364,
+              typePerSec: 10.989,
+              totalReInputCnt: 0,
+              totalReInputTime: 0,
+              reInputRate: 0,
+              averageReInputTime: 0,
+            },
+          },
+        ];
+
+        const result = service.getAnalyticsByPart(testSequenceData2);
+        expect(result).toEqual(expectedAnalyzeSeqPartResult);
       });
     });
   });
