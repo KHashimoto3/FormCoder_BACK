@@ -352,12 +352,15 @@ export class ProgrammService {
     //inputのidxを0にする
     let inputIdx = 0;
     //formのpartTypeに対応するconnectTemplateを取り出す
-    const connectTmp = connectTemplateList.find(
+    let connectTmp = connectTemplateList.find(
       (tmp) => tmp.partType == form.partType,
     );
     if (connectTmp == undefined) {
-      throw new HttpException('何らかのエラーが発生しました。', 500);
+      connectTmp = connectTemplateList[3]; //特別なpartTypeがない場合は、とりあえずそのまま繋げるPROCを使う
     }
+    /*if (connectTmp == undefined) {
+      throw new HttpException('何らかのエラーが発生しました。', 500);
+    }*/
     connectTmp.beforeElement.map((element) => {
       if (element === '{input}') {
         result += inputDataList[form.inputIdx].inputDataArray[inputIdx];
