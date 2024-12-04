@@ -229,7 +229,7 @@ export class SequenceService {
   analyze(dividedKeyDataList: DividedKeyData): AnalyzeSeqIntervalResult {
     const startTimestamp = dividedKeyDataList.startTimestamp;
     const endTimestamp = dividedKeyDataList.endTimestamp;
-    const totalTime = endTimestamp - startTimestamp;
+    const totalTime = endTimestamp - startTimestamp; //ms
     const keyDatas = dividedKeyDataList.keyDataList;
 
     const valueCount = keyDatas.length;
@@ -283,7 +283,7 @@ export class SequenceService {
     const typePerSec = valueCount / (totalTime / 1000);
     //typePerSecを小数点第3位まで表示
     const typePerSecFixed = Number(
-      parseFloat(typePerSec.toString()).toFixed(3),
+      parseFloat(typePerSec.toString()).toFixed(1),
     );
     /* TODO: 以下の情報を、直接printではなく、objectとして返すように変更 */
     /*console.log("\n=======集計結果=======");
@@ -297,18 +297,36 @@ export class SequenceService {
 
     //分析項目：入力ミス率
     let missTypeRate = 0;
+    let missTypeRateFixed = 0;
     let reInputRate = 0;
     let reInputRateFixed = 0;
     let averageReInputTime = 0;
+    let averageReInputTimeFixed = 0;
     if (removedCount > 0) {
-      missTypeRate = removedCount / (inputCount + removedCount);
+      missTypeRate = (removedCount / (inputCount + removedCount)) * 100; //%
+      missTypeRateFixed = Number(
+        parseFloat(missTypeRate.toString()).toFixed(1),
+      );
       //分析項目：書き直した時間の割合
-      reInputRate = totalReInputTime / totalTime;
+      reInputRate = (totalReInputTime / totalTime) * 100; //%
       //reInputRateを小数点第3位まで表示
-      reInputRateFixed = Number(parseFloat(reInputRate.toString()).toFixed(2));
+      reInputRateFixed = Number(parseFloat(reInputRate.toString()).toFixed(1));
       //分析項目：平均書き直しの時間
-      averageReInputTime = totalReInputTime / totalReInputCnt;
+      averageReInputTime = totalReInputTime / totalReInputCnt / 1000; //秒
+      averageReInputTimeFixed = Number(
+        parseFloat(averageReInputTime.toString()).toFixed(1),
+      );
     }
+
+    //単位換算
+    const totalReInputTimeSec = totalReInputTime / 1000;
+    const totalReInputTimeFixed = Number(
+      parseFloat(totalReInputTimeSec.toString()).toFixed(1),
+    );
+    const totalTimeSec = totalTime / 1000;
+    const totalTimeFixed = Number(
+      parseFloat(totalTimeSec.toString()).toFixed(1),
+    );
 
     //集計結果を返す
     const result = {
@@ -319,13 +337,13 @@ export class SequenceService {
       removedCharLength: removedCount,
       inputDataCount: inputDataCount,
       removedDataCount: removedDataCount,
-      missTypeRate: missTypeRate, //入力ミス率
-      totalTime: totalTime, //ms
+      missTypeRate: missTypeRateFixed, //入力ミス率
+      totalTime: totalTimeFixed, //秒
       typePerSec: typePerSecFixed, //個/秒
       totalReInputCnt: totalReInputCnt, //書き直しの回数
-      totalReInputTime: totalReInputTime, //書き直しにかかった時間
+      totalReInputTime: totalReInputTimeFixed, //書き直しにかかった時間
       reInputRate: reInputRateFixed, //書き直した時間の割合
-      averageReInputTime: averageReInputTime, //平均書き直しの時間
+      averageReInputTime: averageReInputTimeFixed, //平均書き直しの時間
     };
     return result;
   }
