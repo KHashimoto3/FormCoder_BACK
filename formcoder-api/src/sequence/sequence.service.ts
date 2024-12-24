@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { AnalyzeSeqIntervalResult } from 'src/type/analyzeSeqIntervalResult';
 import { AnalyzeSeqPartResult } from 'src/type/analyzeSeqPartResult';
 import { SequenceData } from 'src/type/sequenceData';
@@ -112,6 +112,12 @@ export class SequenceService {
 
   //[A-2]一定の時間間隔で、keyDataListを分割する
   divideKeyDatas(keyDatas: KeyData[], intervalTime: number): DividedKeyData[] {
+    if (intervalTime < 1000) {
+      throw new HttpException(
+        'intervalTimeは1000ms以上で指定してください',
+        400,
+      );
+    }
     let analyzeTargetFrom = 0;
     let analyzeTargetTo = intervalTime; //与えられた秒間隔で、分析する
     const dividedKeyDataList: DividedKeyData[] = [];

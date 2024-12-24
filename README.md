@@ -8,27 +8,29 @@
 
 ## 関連リポジトリ
 
-フロントエンドリポジトリ：https://github.com/KHashimoto3/FormCoder_FRONT 
+フロントエンドリポジトリ：https://github.com/KHashimoto3/FormCoder_FRONT
 
 ## ディレクトリ構成
+
 https://docs.google.com/document/d/1-5Ya8wEucOQOCIes5BNXLsFGBXDlWzF03gaGT0_z_2s/edit?usp=sharing
 
-## APIのエンドポイント
+## API のエンドポイント
+
 https://github.com/KHashimoto3/FormCoder_FRONT/blob/develop/swagger/swagger.yaml  
 上記のコードを、  
 Swagger Editor（https://editor.swagger.io/ ）にコピペすることで確認できます。
 
-
 ## 使用技術
-| 領域           | 技術                                             |
-|--------------|-------------------------------------------------|
-| フロントエンド | HTML, CSS, TypeScript, React, MUI, Vite          |
-| バックエンド   | Google Cloud, Nest.js, TypeScript                |
-| データベース   | Cloud Firestore                                 |
-| ストレージ     | Cloud Storage                                   |
-| インフラ           | Firebase, Render                                |
-| CI/CD         | Github Actions                                  |
-| ツール         | git, ESLint, Prettier, Playwright               |
+
+| 領域           | 技術                                    |
+| -------------- | --------------------------------------- |
+| フロントエンド | HTML, CSS, TypeScript, React, MUI, Vite |
+| バックエンド   | Google Cloud, Nest.js, TypeScript       |
+| データベース   | Cloud Firestore                         |
+| ストレージ     | Cloud Storage                           |
+| インフラ       | Firebase, Render                        |
+| CI/CD          | Github Actions                          |
+| ツール         | git, ESLint, Prettier, Playwright       |
 
 ## 環境構築・実行方法
 
@@ -65,5 +67,13 @@ npm run start
 
 ### 5. 起動確認
 
-`localhost:3000/programm/hello`にcurlやPostman等からアクセスし、  
+`localhost:3000/programm/hello`に curl や Postman 等からアクセスし、  
 `{ message: 'hello programm api!' }`と帰ってくれば起動完了です。
+
+## テスト方法
+
+以下のコマンドでテストを実行します。
+
+```
+npm run test
+```

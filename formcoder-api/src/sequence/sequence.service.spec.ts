@@ -451,6 +451,18 @@ describe('SequenceServiceのテスト', () => {
         const result = service.divideKeyDatas(keyDataList, intervalTime);
         expect(result).toEqual(expectedDividedKeyDataList);
       });
+
+      it('intervalが1秒以下の場合、分割せずエラーコードを返す。', () => {
+        const keyDataList = service.getKeyDatas(testSequenceData1);
+        const intervalTime = 1000;
+        const expectedStatus = 400;
+
+        try {
+          service.divideKeyDatas(keyDataList, intervalTime);
+        } catch (error) {
+          expect(error.getStatus()).toBe(expectedStatus);
+        }
+      });
     });
   });
 
