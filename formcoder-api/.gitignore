@@ -5,3 +5,5 @@
 /formcoder-77286-6a6bb007cb25.json
 /.env
 /coverage
+
+.DS_Store

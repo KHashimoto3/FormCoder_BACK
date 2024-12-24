@@ -6,3 +6,4 @@
 /.env
 
 temp.c
+.DS_Store
