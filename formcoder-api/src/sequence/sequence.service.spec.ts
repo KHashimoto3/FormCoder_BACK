@@ -751,6 +751,16 @@ describe('SequenceServiceのテスト', () => {
         const result = service.analyzeWithInterval(10000, testSequenceData1);
         expect(result).toEqual(expectedAnalyzeResultList);
       });
+
+      it('パラメータが足りない時、エラーコードを返す', () => {
+        const expectedStatus = 400;
+
+        try {
+          service.analyzeWithInterval(0, []);
+        } catch (error) {
+          expect(error.getStatus()).toBe(expectedStatus);
+        }
+      });
     });
   });
 
@@ -798,6 +808,31 @@ describe('SequenceServiceのテスト', () => {
         const expectedTimestamps = {
           startTimestamp: 10726,
           endTimestamp: 12239,
+        };
+
+        const result = service.getPartTimestamps(
+          sampleDividedKeyData.keyDataList,
+        );
+        expect(result).toEqual(expectedTimestamps);
+      });
+
+      it('シーケンスデータが１件しかない時、開始と終了のtimestampとして同じ値を返す。', () => {
+        const sampleDividedKeyData: DividedKeyDataWithPart = {
+          partType: 'INC',
+          keyDataList: [
+            {
+              timestamp: 10726,
+              input: ['g'],
+              inputSize: 1,
+              removed: [''],
+              removedSize: 0,
+            },
+          ],
+        };
+
+        const expectedTimestamps = {
+          startTimestamp: 10726,
+          endTimestamp: 10726,
         };
 
         const result = service.getPartTimestamps(
@@ -1142,6 +1177,16 @@ describe('SequenceServiceのテスト', () => {
 
         const result = service.getAnalyticsByPart(testSequenceData2);
         expect(result).toEqual(expectedAnalyzeSeqPartResult);
+      });
+
+      it('パラメータが足りない時、エラーコードを返す', () => {
+        const expectedStatus = 400;
+
+        try {
+          service.getAnalyticsByPart([]);
+        } catch (error) {
+          expect(error.getStatus()).toBe(expectedStatus);
+        }
       });
     });
   });

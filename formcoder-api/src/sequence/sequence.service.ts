@@ -38,6 +38,9 @@ export class SequenceService {
     intervalTime: number,
     sequence: SequenceData[],
   ): AnalyzeSeqIntervalResult[] {
+    if (intervalTime === undefined || intervalTime === undefined) {
+      throw new HttpException('必要なデータが渡されていません。', 400);
+    }
     //シーケンスデータを、解析に使える形に変換する
     const keyDataList = this.getKeyDatas(sequence);
     const dividedKeyDataList = this.divideKeyDatas(keyDataList, intervalTime);
@@ -47,6 +50,9 @@ export class SequenceService {
 
   //[B]フォームの入力欄ごとにシーケンスの分析を行う
   getAnalyticsByPart(sequence: SequenceData[]): AnalyzeSeqPartResult[] {
+    if (sequence === undefined) {
+      throw new HttpException('必要なデータが渡されていません。', 400);
+    }
     const keyDatasWithPartList: KeyDatasWithPart[] = [];
     sequence.map((value) => {
       const values = [value];
