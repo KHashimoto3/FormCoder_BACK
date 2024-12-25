@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { AnalyzeSeqIntervalResult } from 'src/type/analyzeSeqIntervalResult';
 import { AnalyzeSeqPartResult } from 'src/type/analyzeSeqPartResult';
 import { SequenceData } from 'src/type/sequenceData';
@@ -38,6 +38,9 @@ export class SequenceService {
     intervalTime: number,
     sequence: SequenceData[],
   ): AnalyzeSeqIntervalResult[] {
+    if (intervalTime === undefined || intervalTime === undefined) {
+      throw new HttpException('必要なデータが渡されていません。', 400);
+    }
     //シーケンスデータを、解析に使える形に変換する
     const keyDataList = this.getKeyDatas(sequence);
     const dividedKeyDataList = this.divideKeyDatas(keyDataList, intervalTime);
@@ -47,6 +50,9 @@ export class SequenceService {
 
   //[B]フォームの入力欄ごとにシーケンスの分析を行う
   getAnalyticsByPart(sequence: SequenceData[]): AnalyzeSeqPartResult[] {
+    if (sequence === undefined) {
+      throw new HttpException('必要なデータが渡されていません。', 400);
+    }
     const keyDatasWithPartList: KeyDatasWithPart[] = [];
     sequence.map((value) => {
       const values = [value];
@@ -112,6 +118,12 @@ export class SequenceService {
 
   //[A-2]一定の時間間隔で、keyDataListを分割する
   divideKeyDatas(keyDatas: KeyData[], intervalTime: number): DividedKeyData[] {
+    if (intervalTime < 1000) {
+      throw new HttpException(
+        'intervalTimeは1000ms以上で指定してください',
+        400,
+      );
+    }
     let analyzeTargetFrom = 0;
     let analyzeTargetTo = intervalTime; //与えられた秒間隔で、分析する
     const dividedKeyDataList: DividedKeyData[] = [];
