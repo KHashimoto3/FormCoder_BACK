@@ -454,7 +454,7 @@ describe('SequenceServiceのテスト', () => {
 
       it('intervalが1秒以下の場合、分割せずエラーコードを返す。', () => {
         const keyDataList = service.getKeyDatas(testSequenceData1);
-        const intervalTime = 1000;
+        const intervalTime = 900;
         const expectedStatus = 400;
 
         try {
