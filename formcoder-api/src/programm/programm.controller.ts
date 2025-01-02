@@ -46,4 +46,9 @@ export class ProgrammController {
       connectCodeInputDto.inputData,
     );
   }
+
+  @Post('format-code')
+  formatCode(@Body() body: { code: string }): Promise<{ result: string }> {
+    return this.programmService.formatCode(body.code);
+  }
 }
