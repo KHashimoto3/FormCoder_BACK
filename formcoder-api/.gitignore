@@ -6,4 +6,5 @@
 /.env
 /coverage
 
+temp.c
 .DS_Store
