@@ -25,17 +25,19 @@ export class ProgrammService {
     code: string,
     input: string,
   ): Promise<ExecResult | ExecError> {
+    //code内の¥nを改行コードに置き換え
+    const replacedCode = code.replace(/¥n/g, '\\n');
     let bodyData;
     if (input == 'none') {
       bodyData = {
-        code: code,
+        code: replacedCode,
         options: 'warning,gnu++1y',
         compiler: 'gcc-13.2.0-c',
         'compiler-option-raw': '-Dx=hogefuga\n-O3',
       };
     } else {
       bodyData = {
-        code: code,
+        code: replacedCode,
         stdin: input,
         options: 'warning,gnu++1y',
         compiler: 'gcc-13.2.0-c',
