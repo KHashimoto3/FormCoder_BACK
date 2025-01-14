@@ -283,7 +283,15 @@ export class ProgrammService {
       {
         partType: 'FOR',
         haveChildren: true,
-        beforeElement: ['for(', '{input}', ') {\\n'],
+        beforeElement: [
+          'for(',
+          '{input}',
+          ';',
+          '{input}',
+          ';',
+          '{input}',
+          ') {\\n',
+        ],
         afterElement: ['\\n}'],
       },
       {
